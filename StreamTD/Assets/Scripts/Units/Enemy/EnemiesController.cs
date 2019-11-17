@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Controllers;
 using UnityEngine;
 
@@ -6,9 +7,11 @@ namespace Assets.Scripts.Units.Enemy
 {
     public class EnemiesController : EntitiesController<Enemy>
     {
-        public static GameObject EnemyPrefab;
         public static Canvas ParentCanvas;
 
+
+        private readonly ObjectBodyPool<Enemy, EnemyType> _pool;
+        private GameObject _enemyPrefab;
         private MapField _tile;
         private MapField StartingTile
         {
@@ -27,26 +30,31 @@ namespace Assets.Scripts.Units.Enemy
 
         public void SpawnEnemy(Enemy enemy)
         {
-            enemy.Move(StartingTile.Position);
-            Entities.Add(enemy);
+            enemy.Position = Vector2.one * 1000f;
+            var newEnemy = _pool.GetObject(enemy, null, EnemyType.Light);
+            newEnemy.Object.Move(StartingTile.Position);
+            Entities.Add(newEnemy.Object);
         }
 
         public void ProcessMovement()
         {
-            var entities = Entities.ToArray();
-            foreach (Enemy enemy in entities)
-            {
+            foreach (Enemy enemy in Entities.ToArray())
                 enemy.DoStep();
+            _pool.UpdateAllBodies();
+
+            foreach (var bodyPoolItem in _pool.Pool.Where(item => item.InUse))
+            {
+                var targetPosition = bodyPoolItem.Object.PathToTraverse[bodyPoolItem.Object.CurrentFieldIndex].Position;
+                var newPosition = bodyPoolItem.Object.Position;
+                bodyPoolItem.Body.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPosition.y - newPosition.y, targetPosition.x - newPosition.x) * Mathf.Rad2Deg - 90f);
+                bodyPoolItem.Body.transform.localScale = Vector3.one * 25 * bodyPoolItem.Object.HP / bodyPoolItem.Object.MaxHp;
             }
         }
 
         public void ProcessAttacks()
         {
-            var entities = Entities.ToArray();
-            foreach (Enemy enemy in entities)
-            {
+            foreach (Enemy enemy in Entities.ToArray())
                 enemy.AutoAttack();
-            }
         }
 
         public override void ProcessActions()
@@ -59,8 +67,7 @@ namespace Assets.Scripts.Units.Enemy
 
         private void ApplyDebuffs()
         {
-            var entities = Entities.ToArray();
-            foreach (Enemy enemy in entities)
+            foreach (Enemy enemy in Entities.ToArray())
             {
                 enemy.DOTDebuff?.UpdateDuration();
                 enemy.CCDebuff?.UpdateDuration();
@@ -73,8 +80,13 @@ namespace Assets.Scripts.Units.Enemy
             }
         }
 
-        public EnemiesController(GameController gc) : base(gc)
+        public EnemiesController(GameController gc, GameObject enemyPrefab, Transform enemiesParent, Sprite spriteLight, Sprite spriteMedium, Sprite spriteHeavy) : base(gc)
         {
+            _pool = new ObjectBodyPool<Enemy, EnemyType>(enemyPrefab, enemiesParent, new Dictionary<EnemyType, Sprite> {
+                { EnemyType.Light, spriteLight},
+                { EnemyType.Medium, spriteMedium},
+                { EnemyType.Heavy, spriteHeavy}
+            });
         }
 
         public override void RemoveInstance(Enemy entity)
@@ -83,6 +95,8 @@ namespace Assets.Scripts.Units.Enemy
 
             Gc.ScoreController.Add(entity.ScoreValue);
             base.RemoveInstance(entity);
+
+            _pool.ReturnToPool(entity);
         }
     }
 }

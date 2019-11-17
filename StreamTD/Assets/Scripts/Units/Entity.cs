@@ -4,7 +4,8 @@ namespace Assets.Scripts.Units
 {
     public abstract class Entity
     {
-        public Vector2 Position { get; private set; }
+        public Vector2 Position { get; set; }
+        public Vector3 Rotation { get; set; }
         public float Speed { get; set; }
 
         public float CalculateDistance(Entity target)
@@ -20,6 +21,12 @@ namespace Assets.Scripts.Units
         public bool IsInRange(Vector2 target, float range)
         {
             return CalculateDistance(target) <= range;
+        }
+
+        public virtual void Move(Vector2 newPosition, Vector3 rotation)
+        {
+            Position = newPosition;
+            Rotation = rotation;
         }
 
         public virtual void Move(Vector2 newPosition)

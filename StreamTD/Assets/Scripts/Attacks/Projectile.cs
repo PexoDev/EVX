@@ -6,9 +6,9 @@ namespace Assets.Scripts.Attacks
 {
     public class Projectile : Entity, IAttack
     {
-        public readonly Action HitMethod;
-
-        private GameObject _body;
+        public Action HitMethod { get; set; }
+        public DamageType DamageType { get; }
+        public int Damage { get; }
         public LivingEntity Target;
 
         public Projectile(int damageValue, DamageType type)
@@ -24,39 +24,13 @@ namespace Assets.Scripts.Attacks
             Move(position);
             Target = target;
             HitMethod = hitMethod;
-            Render();
         }
 
-        public GameObject Body
-        {
-            get => _body;
-            set
-            {
-                _body = value;
-                _body.transform.position = Position;
-                _body.SetActive(true);
-            }
-        }
 
-        public DamageType DamageType { get; }
-        public int Damage { get; }
-
-
-        public void Act()
-        {
-            Move();
-            Render();
-        }
-
-        private void Render()
-        {
-            if (Body == null) return;
-            Body.transform.position = Position;
-        }
-
-        private void Move()
+        public void Move()
         {
             Move(Vector2.MoveTowards(Position, Target.Position, Speed * Time.fixedDeltaTime));
+            Rotation = new Vector3(0, 0, Mathf.Atan2(Target.Position.y - Position.y, Target.Position.x - Position.x) * Mathf.Rad2Deg);
             if (IsInRange(Target.Position, 0.01f))
                 DisposeProjectile();
         }

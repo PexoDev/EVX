@@ -7,10 +7,12 @@ namespace Assets.Scripts.Units
 {
     public abstract class LivingEntity: Entity
     {
+        public bool Targetable { get; set; } = true;
         public bool Alive { get; private set; } = true;
+
         public HealthType HealthType { get; protected set; }
 
-        protected int MaxHp = 1;
+        public int MaxHp { get; protected set; } = 1;
         protected int Hp = 1;
         public virtual int HP
         {
@@ -67,7 +69,6 @@ namespace Assets.Scripts.Units
 
         private void EvadeAttack()
         {
-            Debug.Log("Evaded attack");
         }
 
         private void DeflectAttack()

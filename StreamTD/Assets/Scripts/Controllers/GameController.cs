@@ -43,6 +43,13 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private SpriteRenderer[] _levelPoints;
         [SerializeField] private Slider _expSlider;
 
+        [SerializeField] private Sprite _soldierSprite;
+        [SerializeField] private Sprite _enemySprite;
+
+        [SerializeField] private Sprite _plasmaSprite;
+        [SerializeField] private Sprite _laserSprite;
+        [SerializeField] private Sprite _ballisticSprite;
+
         public EnemiesController EnemiesController { get; set; }
         public SoldiersController SoldiersController { get; set; }
 
@@ -59,7 +66,7 @@ namespace Assets.Scripts.Controllers
 
         private void Start()
         {
-            EnemiesController = new EnemiesController(this);
+            EnemiesController = new EnemiesController(this, _enemyPrefab, _mainCanvas.transform, _soldierSprite, _soldierSprite, _soldierSprite);
             SoldiersController = new SoldiersController(this);
             Hqm = new HQManager(SoldiersController);
 
@@ -70,9 +77,8 @@ namespace Assets.Scripts.Controllers
             PlayerBase = new PlayerBase(SoldiersController);
             PlayerBase.Tile = Map.Path.Last();
 
-            ProjectilesController = new ProjectilesController(_projectilePrefab, _mainCanvas);
+            ProjectilesController = new ProjectilesController(_projectilePrefab, _mainCanvas, _plasmaSprite, _laserSprite, _ballisticSprite);
 
-            EnemiesController.EnemyPrefab = _enemyPrefab;
             EnemiesController.ParentCanvas = _mainCanvas;
         }
 
@@ -93,9 +99,8 @@ namespace Assets.Scripts.Controllers
 
             if (Input.GetKeyDown(KeyCode.Alpha1)) _gameSpeed = 1;
             if (Input.GetKeyDown(KeyCode.Alpha2)) _gameSpeed = 2;
-            if (Input.GetKeyDown(KeyCode.Alpha3)) _gameSpeed = 3;
-            if (Input.GetKeyDown(KeyCode.Alpha4)) _gameSpeed = 4;
-            if (Input.GetKeyDown(KeyCode.Alpha5)) _gameSpeed = 5;
+            if (Input.GetKeyDown(KeyCode.Alpha3)) _gameSpeed = 4;
+            if (Input.GetKeyDown(KeyCode.Alpha4)) _gameSpeed = 8;
 
             ProcessGameLoop();
         }
@@ -153,7 +158,7 @@ namespace Assets.Scripts.Controllers
             }
 
             defaultEnemySettings = defaultEnemySettings.IncreaseAllByFactor(_difficulty);
-            EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings));
+            EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, _enemySprite));
         }
     }
 

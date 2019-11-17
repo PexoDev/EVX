@@ -74,7 +74,7 @@ namespace Assets.Scripts.Units
 
         protected void Attack(TTargetType target)
         {
-            if (UnitParams.AttacksPerSecond == 0) return;
+            if (UnitParams.AttacksPerSecond == null || UnitParams.AttacksPerSecond <= 0) return;
             if (target == null) return;
             if (!CooldownController.GetCooldown(_cooldownKey, 1 / (float)UnitParams.AttacksPerSecond)) return;
 
@@ -87,8 +87,8 @@ namespace Assets.Scripts.Units
                 Debug.Log("Critted!");
             }
 
-            ProjectilesController.Instance.InitializeProjectile(attackDamage, DamageType, Position, target,
-                () => target.GetHit(new Projectile(Damage, DamageType)));
+            ProjectilesController.Instance.InitializeProjectile(new Projectile(attackDamage, DamageType, Position, target,
+                () => target.GetHit(new Projectile(Damage, DamageType))), null);
         }
 
         public virtual TTargetType LookForTarget()
@@ -99,7 +99,7 @@ namespace Assets.Scripts.Units
                 else
                     CurrentTarget = null;
 
-            CurrentTarget = TargetsController.Entities.FirstOrDefault(enemy => enemy.IsInRange(Position, AttackRange));
+            CurrentTarget = TargetsController.Entities.FirstOrDefault(enemy => enemy.Targetable && enemy.IsInRange(Position, AttackRange));
 
             return CurrentTarget;
         }

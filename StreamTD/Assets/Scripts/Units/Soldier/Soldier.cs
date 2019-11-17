@@ -73,13 +73,10 @@ namespace Assets.Scripts.Units.Soldier
             base.Die();
             Tile.Type = MapFieldType.Empty;
             Controller.RemoveInstance(this);
-
-            Debug.Log("Auuuuauuuuu. **dies**");
         }
 
         public override void AnimateHurt()
         {
-            Debug.Log("No nie w szczepionke!");
         }
     }
 }
