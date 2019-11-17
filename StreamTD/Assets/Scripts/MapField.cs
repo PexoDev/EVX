@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {
     public class MapField
     {
-        public Button Button;
         public event Action OnTypeChanged = () => { };
 
         public static Dictionary<MapFieldType, Color> FieldColors = new Dictionary<MapFieldType, Color>()
@@ -35,21 +34,13 @@ namespace Assets.Scripts
 
         public Vector2 Position { get; set; }
 
-        public void OnClick(HQManager hqm)
+        public void PlaceSoldier(HQManager hqm, InteractiveMapField field)
         {
             if (GameController.Mode != GameMode.Building) return;
             if (Type != MapFieldType.Empty) return;
 
-            if(hqm.PlaceSoldier(this))
+            if(hqm.PlaceSoldier(field))
                 Type = MapFieldType.Soldier;
-        }
-        public void OnClick(Action action)
-        {
-            Button.onClick.RemoveAllListeners();
-            Button.onClick.AddListener(() =>
-            {
-                action?.Invoke();
-            });
         }
     }
 

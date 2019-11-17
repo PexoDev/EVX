@@ -26,7 +26,7 @@ namespace Assets.Scripts.Controllers
             _selectedSoldier = soldier;
         }
 
-        public bool PlaceSoldier(MapField field)
+        public bool PlaceSoldier(InteractiveMapField field)
         {
             var res = _soldiersController.SpawnSoldier(_selectedSoldier, field);
             SelectedSoldier = null;

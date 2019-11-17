@@ -10,47 +10,43 @@ namespace Assets.Scripts
 {
     public class MapGrid
     {
-        private readonly (int x, int y) _mapSize = (18, 18);
-        public readonly MapField[][] Map;
-
-        private SpriteRenderer[][] _fieldsSpriteRenderers;
-        private GameObject[][] _fieldsObjects;
-        private float _gridDistance = 1f;
-
         //map[x][y]
         //map:
         //x0:y0y1y2y3
         //x1:y0y1y2y3
         //x2:y0y1y2y3
-
+        public readonly InteractiveMapField[][] Map;
         public MapField[] Path;
 
-        public MapGrid(GameObject fieldPrefab, Transform parent, GameController gc)
+        private readonly (int x, int y) _mapSize = (18, 18);
+        private float _gridDistance = 1f;
+
+        public MapGrid(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite)
         {
             GenerateEmptyMap(ref Map);
             RandomizeTerrainBlocks(ref Map, 30);
             RandomizePath(ref Map);
-            Instantiate(fieldPrefab, parent, gc);
+            Instantiate(fieldPrefab, parent, gc, mapFieldSprite);
         }
 
-        private void GenerateEmptyMap(ref MapField[][] map)
+        private void GenerateEmptyMap(ref InteractiveMapField[][] map)
         {
-            map = new MapField[_mapSize.x][];
+            map = new InteractiveMapField[_mapSize.x][];
             for (var i = 0; i < _mapSize.x; i++)
             {
-                map[i] = new MapField[_mapSize.y];
-                for (var j = 0; j < Map[i].Length; j++) map[i][j] = new MapField();
+                map[i] = new InteractiveMapField[_mapSize.y];
+                for (var j = 0; j < Map[i].Length; j++) map[i][j] = new InteractiveMapField();
             }
         }
 
-        private void RandomizeTerrainBlocks(ref MapField[][] map, int count)
+        private void RandomizeTerrainBlocks(ref InteractiveMapField[][] map, int count)
         {
             var result = new Vector2Int[count];
             var emptyFields = new List<Vector2Int>();
 
             for (var i = 0; i < map.Length; i++)
             for (var j = 0; j < map[i].Length; j++)
-                if (map[i][j].Type == MapFieldType.Empty)
+                if (map[i][j].Field.Type == MapFieldType.Empty)
                     emptyFields.Add(new Vector2Int(i, j));
 
             if (emptyFields.Count < count)
@@ -61,14 +57,14 @@ namespace Assets.Scripts
             {
                 var randIndex = GameController.RandomGenerator.Next(0, emptyFields.Count - 1);
                 result[i] = emptyFields[randIndex];
-                map[result[i].x][result[i].y].Type = MapFieldType.Terrain;
+                map[result[i].x][result[i].y].Field.Type = MapFieldType.Terrain;
                 emptyFields.RemoveAt(randIndex);
             }
         }
 
-        private void RandomizePath(ref MapField[][] map)
+        private void RandomizePath(ref InteractiveMapField[][] map)
         {
-            var path = new List<MapField>();
+            var path = new List<InteractiveMapField>();
             var pathX = GameController.RandomGenerator.Next(0, _mapSize.x);
             var pathY = 0;
 
@@ -78,7 +74,7 @@ namespace Assets.Scripts
             do
             {
                 path.Add(map[pathX][pathY]);
-                path.Last().Type = MapFieldType.Path;
+                path.Last().Field.Type = MapFieldType.Path;
 
                 if (GameController.RandomGenerator.Next(0, 101) < 66)
                 {
@@ -108,60 +104,53 @@ namespace Assets.Scripts
                 }
             } while (pathY < _mapSize.y);
 
-            Path = path.ToArray();
+            Path = path.Select(field => field.Field).ToArray();
             //Setting last path tile to be a base
             Path[Path.Length - 1].Type = MapFieldType.Base;
         }
 
-        private void Instantiate(GameObject fieldPrefab, Transform parent, GameController gc)
+        private void Instantiate(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite)
         {
-            _fieldsSpriteRenderers = new SpriteRenderer[_mapSize.x][];
-            _fieldsObjects = new GameObject[_mapSize.x][];
-
             var offsetValue = -Map.Length * 0.4725f;
             var offset = new Vector3(offsetValue, offsetValue, 0);
             for (var i = 0; i < Map.Length; i++)
+            for (var j = 0; j < Map[i].Length; j++)
             {
-                _fieldsSpriteRenderers[i] = new SpriteRenderer[_mapSize.x];
-                _fieldsObjects[i] = new GameObject[_mapSize.x];
-
-                for (var j = 0; j < Map[i].Length; j++)
-                {
-                    GenerateGameObjectsForMapFields(i, j, fieldPrefab, parent, offset);
-                    AddListeners(gc, i, j);
-                }
+                GenerateGameObjectsForMapFields(i, j, fieldPrefab, parent, offset, mapFieldSprite);
+                AddListeners(gc, i, j);
             }
 
             Render();
         }
 
-        private void GenerateGameObjectsForMapFields(int i, int j, GameObject fieldPrefab, Transform parent, Vector3 offset)
+        private void GenerateGameObjectsForMapFields(int i, int j, GameObject fieldPrefab, Transform parent, Vector3 offset, Sprite mapFieldSprite)
         {
-            _fieldsObjects[i][j] = Object.Instantiate(fieldPrefab, parent);
-            _fieldsSpriteRenderers[i][j] = _fieldsObjects[i][j].GetComponent<SpriteRenderer>();
+            Map[i][j].GameObject = Object.Instantiate(fieldPrefab, parent);
+            Map[i][j].SpriteRenderer = Map[i][j].GameObject.AddComponent<SpriteRenderer>();
+            Map[i][j].ClickableObject = Map[i][j].GameObject.AddComponent<ClickableObject>();
+            Map[i][j].GameObject.AddComponent<BoxCollider2D>().size = Vector2.one * 0.11f;
 
             var position = new Vector3(i * _gridDistance, j * _gridDistance) + offset;
             position.z = 0;
 
-            Map[i][j].Position = position;
-            _fieldsObjects[i][j].transform.localPosition = position;
+            Map[i][j].Field.Position = position;
+            Map[i][j].GameObject.transform.localPosition = position;
+            Map[i][j].SpriteRenderer.sprite = mapFieldSprite;
         }
 
         private void AddListeners(GameController gc, int i, int j)
         {
-            Map[i][j].OnTypeChanged += () => RenderTile(i, j);
-            var btn = _fieldsObjects[i][j].AddComponent<Button>();
-            btn.onClick.AddListener(() =>
+            Map[i][j].Field.OnTypeChanged += () => RenderTile(i, j);
+            Map[i][j].ClickableObject.OnClickActions.Push(() =>
             {
-                Map[i][j].OnClick(gc.Hqm);
+                Map[i][j].Field.PlaceSoldier(gc.Hqm, Map[i][j]);
                 Render();
             });
-            Map[i][j].Button = btn;
         }
 
         private void RenderTile(int x, int y)
         {
-            _fieldsSpriteRenderers[x][y].color = MapField.FieldColors[Map[x][y].Type];
+            Map[x][y].SpriteRenderer.color = MapField.FieldColors[Map[x][y].Field.Type];
         }
 
         public void Render()

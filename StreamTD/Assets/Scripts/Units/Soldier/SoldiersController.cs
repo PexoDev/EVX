@@ -14,7 +14,7 @@ namespace Assets.Scripts.Units.Soldier
         {
         }
 
-        public bool SpawnSoldier(Soldier soldier, MapField field)
+        public bool SpawnSoldier(Soldier soldier, InteractiveMapField field)
         {
             if (Entities.Count >= 10)
             {
@@ -22,10 +22,10 @@ namespace Assets.Scripts.Units.Soldier
                 return false;
             }
 
-            soldier.Tile = field;
+            soldier.Tile = field.Field;
 
             Entities.Add(soldier);
-            field.OnClick(async ()=>
+            field.ClickableObject.OnClickActions.Push(async ()=>
             {
                 await soldier.LevelUp();
                 Gc.UIController.UpgradeManager.CurrentSoldier = soldier;

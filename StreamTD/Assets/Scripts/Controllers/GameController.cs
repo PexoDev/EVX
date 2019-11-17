@@ -47,6 +47,8 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private SpriteRenderer[] _levelPoints;
         [SerializeField] private Slider _expSlider;
 
+        [SerializeField] private Sprite _mapFieldSprite;
+
         [SerializeField] private Sprite _soldierSprite;
         [SerializeField] private Sprite _enemySprite;
 
@@ -77,11 +79,11 @@ namespace Assets.Scripts.Controllers
             UIController = new UIController(this, _mainCanvas, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
             UIController.Instantiate();
 
-            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this);
+            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite);
             PlayerBase = new PlayerBase(SoldiersController)
                 { Tile = Map.Path.Last()};
 
-            ProjectilesController = new ProjectilesController(_projectilePrefab, _mainCanvas, _plasmaSprite, _laserSprite, _ballisticSprite);
+            ProjectilesController = new ProjectilesController(_projectilePrefab, _projectilesParentTransform, _plasmaSprite, _laserSprite, _ballisticSprite);
 
             EnemiesController.ParentCanvas = _mainCanvas;
         }
