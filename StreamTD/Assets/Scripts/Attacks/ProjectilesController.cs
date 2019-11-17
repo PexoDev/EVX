@@ -29,13 +29,13 @@ namespace Assets.Scripts.Attacks
 
         public void ProcessProjectiles()
         {
-            foreach (var poolItem in _pool.Pool.Where(proj => proj.InUse))
+            foreach (var poolItem in _pool.Pool.Where(proj => proj.InUse).ToArray())
                 poolItem.Object.Move();
 
             _pool.UpdateAllBodies();
         }
 
-        public ObjectBodyPoolItem<Projectile> InitializeProjectile(Projectile projectile, Action hitAction)
+        public ObjectBodyPoolItem<Projectile> InitializeProjectile(Projectile projectile)
         {
             var cacheAction = projectile.HitMethod;
             projectile.HitMethod = () =>
@@ -46,7 +46,7 @@ namespace Assets.Scripts.Attacks
 
             var newObj = _pool.GetObject(projectile, null, projectile.DamageType);
             newObj.Body.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(projectile.Target.Position.y - projectile.Position.y, projectile.Target.Position.x - projectile.Position.x) * Mathf.Rad2Deg);
-            newObj.Body.transform.localScale = Vector3.one * ((projectile.Damage < 100) ? (projectile.Damage > 16) ? projectile.Damage * .02f : .33f : 2f);
+            newObj.Body.transform.localScale = Vector3.one * ((projectile.Damage < 100) ? (projectile.Damage > 25) ? projectile.Damage * .04f : .66f : 4f);
             return newObj;
         }
     }

@@ -5,7 +5,7 @@ namespace Assets.Scripts.Units.Soldier
 {
     public class DummySoldier: Soldier
     {
-        public DummySoldier(string name, MapField field, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(name, field, ec, sc, dt,ht, up)
+        public DummySoldier(string name, InteractiveMapField field, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(name, field, ec, sc, dt,ht, up)
         {
         }
 

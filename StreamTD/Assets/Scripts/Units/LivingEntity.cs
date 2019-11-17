@@ -19,6 +19,8 @@ namespace Assets.Scripts.Units
             get => Hp;
             set
             {
+                if(!Alive) return;
+
                 Hp = value;
                 if (value > MaxHp) HP = MaxHp;
                 if (Hp <= 0) Die();
@@ -33,7 +35,7 @@ namespace Assets.Scripts.Units
 
         private readonly string _cooldownKey = Guid.NewGuid().ToString();
 
-        public virtual void GetHit(IAttack attack)
+        public virtual void GetHit(Projectile attack)
         {
             int damage = attack.Damage;
 
@@ -41,7 +43,7 @@ namespace Assets.Scripts.Units
             {
                 if (GameController.RandomGenerator.Next(0, 101) * 0.01f < DeflectionChance)
                 {
-                    DeflectAttack();
+                    DeflectAttack(attack);
                     return;
                 }
 
@@ -71,9 +73,10 @@ namespace Assets.Scripts.Units
         {
         }
 
-        private void DeflectAttack()
+        private void DeflectAttack(Projectile attack)
         {
-            Debug.Log("Deflected attack");
+            ProjectilesController.Instance.InitializeProjectile(new Projectile(attack.Damage, attack.DamageType, Position, this, attack.Attacker,
+                () => attack.Attacker.GetHit(new Projectile(attack.Damage, attack.DamageType) { Attacker = this })));
         }
 
         public virtual void Die()

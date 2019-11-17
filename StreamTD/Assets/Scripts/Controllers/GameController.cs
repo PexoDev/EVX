@@ -80,8 +80,6 @@ namespace Assets.Scripts.Controllers
             UIController.Instantiate();
 
             Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite);
-            PlayerBase = new PlayerBase(SoldiersController)
-                { Tile = Map.Path.Last()};
 
             ProjectilesController = new ProjectilesController(_projectilePrefab, _projectilesParentTransform, _plasmaSprite, _laserSprite, _ballisticSprite);
 
@@ -159,7 +157,7 @@ namespace Assets.Scripts.Controllers
             }
             else 
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, Damage = 1, AttackRange = 1, MaxHealth = 40, Health = 40, AttacksPerSecond = 2f };
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, Damage = 1, AttackRange = 1, MaxHealth = 40, Health = 40, AttacksPerSecond = 2f};
                 _enemySpawnCooldown = 0.75f;
             }
 

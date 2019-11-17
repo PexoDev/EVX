@@ -15,7 +15,7 @@ namespace Assets.Scripts.Attacks
             {DamageType.Plasma, (HealthType.EMF, HealthType.Armor)},
         };
 
-        public static int CalculateDamage(IAttack attack, HealthType healthType, bool fluctuate = true)
+        public static int CalculateDamage(Projectile attack, HealthType healthType, bool fluctuate = true)
         {
             float calculatedDamage = attack.Damage;
             //Adding a little random damage fluctuation

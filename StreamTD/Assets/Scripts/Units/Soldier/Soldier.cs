@@ -36,22 +36,22 @@ namespace Assets.Scripts.Units.Soldier
             GameController.Mode = GameMode.Play;
         }
 
-        private MapField _tile;
-        public MapField Tile
+        private InteractiveMapField _tile;
+        public InteractiveMapField Tile
         {
             get => _tile;
             set
             {
                 _tile = value;
                 if (_tile == null) return;
-                Move(_tile.Position);
+                Move(_tile.Field.Position);
             }
         }
 
         public int Level { get; set; }
         public int KillCount { get; set; }
 
-        protected Soldier(string name, MapField tile, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc, dt,ht,up)
+        protected Soldier(string name, InteractiveMapField tile, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc, dt,ht,up)
         {
             Name = name;
             Tile = tile;
@@ -71,7 +71,8 @@ namespace Assets.Scripts.Units.Soldier
         public override void Die()
         {
             base.Die();
-            Tile.Type = MapFieldType.Empty;
+            Tile.Field.Type = MapFieldType.Empty;
+            Tile.ClickableObject.OnClickActions.Pop();
             Controller.RemoveInstance(this);
         }
 

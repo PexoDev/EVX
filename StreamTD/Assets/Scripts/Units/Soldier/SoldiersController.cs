@@ -22,7 +22,7 @@ namespace Assets.Scripts.Units.Soldier
                 return false;
             }
 
-            soldier.Tile = field.Field;
+            soldier.Tile = field;
 
             Entities.Add(soldier);
             field.ClickableObject.OnClickActions.Push(async ()=>

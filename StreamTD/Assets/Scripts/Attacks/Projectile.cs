@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.Attacks
 {
-    public class Projectile : Entity, IAttack
+    public class Projectile : Entity
     {
         public Action HitMethod { get; set; }
         public DamageType DamageType { get; }
         public int Damage { get; }
-        public LivingEntity Target;
+        public LivingEntity Attacker { get; set; }
+        public LivingEntity Target { get; set; }
 
         public Projectile(int damageValue, DamageType type)
         {
@@ -18,7 +19,7 @@ namespace Assets.Scripts.Attacks
             Speed = 5;
         }
 
-        public Projectile(int damageValue, DamageType type, Vector2 position, LivingEntity target, Action hitMethod) :
+        public Projectile(int damageValue, DamageType type, Vector2 position, LivingEntity attacker, LivingEntity target, Action hitMethod) :
             this(damageValue, type)
         {
             Move(position);

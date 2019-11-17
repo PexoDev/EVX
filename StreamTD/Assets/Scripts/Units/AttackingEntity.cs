@@ -64,7 +64,9 @@ namespace Assets.Scripts.Units
             _unitParams.Health = _unitParams.MaxHealth;
             MaxHp = _unitParams.MaxHealth ?? 0;
             HP = _unitParams.Health ?? 0;
-            if(SpecialAttacksModule != null) SpecialAttacksModule.Parameters = _unitParams;
+            DeflectionChance = _unitParams.DeflectionChance ?? 0;
+            EvasionChance = _unitParams.EvasionChance ?? 0;
+            if (SpecialAttacksModule != null) SpecialAttacksModule.Parameters = _unitParams;
         }
 
         public virtual void AutoAttack()
@@ -87,8 +89,8 @@ namespace Assets.Scripts.Units
                 Debug.Log("Critted!");
             }
 
-            ProjectilesController.Instance.InitializeProjectile(new Projectile(attackDamage, DamageType, Position, target,
-                () => target.GetHit(new Projectile(Damage, DamageType))), null);
+            ProjectilesController.Instance.InitializeProjectile(new Projectile(attackDamage, DamageType, Position,this, target,
+                () => target.GetHit(new Projectile(Damage, DamageType){Attacker = this})));
         }
 
         public virtual TTargetType LookForTarget()
