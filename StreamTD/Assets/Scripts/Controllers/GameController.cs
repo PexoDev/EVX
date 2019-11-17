@@ -27,8 +27,12 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private GameObject _mapFieldObjectPrefab;
         [SerializeField] private GameObject _projectilePrefab;
 
+        [SerializeField] private Transform _mapParentTransform;
+        [SerializeField] private Transform _enemiesParentTransform;
+        [SerializeField] private Transform _soldiersParentTransform;
+        [SerializeField] private Transform _projectilesParentTransform;
+
         [SerializeField] private Canvas _mainCanvas;
-        [SerializeField] private Canvas _mapCanvas;
         [SerializeField] private Canvas _choiceModalCanvas;
         [SerializeField] private Text _choiceText;
 
@@ -66,16 +70,16 @@ namespace Assets.Scripts.Controllers
 
         private void Start()
         {
-            EnemiesController = new EnemiesController(this, _enemyPrefab, _mainCanvas.transform, _soldierSprite, _soldierSprite, _soldierSprite);
+            EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _soldierSprite, _soldierSprite, _soldierSprite);
             SoldiersController = new SoldiersController(this);
             Hqm = new HQManager(SoldiersController);
 
             UIController = new UIController(this, _mainCanvas, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
             UIController.Instantiate();
 
-            Map = new MapGrid(_mapFieldObjectPrefab, _mapCanvas, this);
-            PlayerBase = new PlayerBase(SoldiersController);
-            PlayerBase.Tile = Map.Path.Last();
+            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this);
+            PlayerBase = new PlayerBase(SoldiersController)
+                { Tile = Map.Path.Last()};
 
             ProjectilesController = new ProjectilesController(_projectilePrefab, _mainCanvas, _plasmaSprite, _laserSprite, _ballisticSprite);
 

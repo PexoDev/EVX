@@ -47,7 +47,7 @@ namespace Assets.Scripts.Units.Enemy
                 var targetPosition = bodyPoolItem.Object.PathToTraverse[bodyPoolItem.Object.CurrentFieldIndex].Position;
                 var newPosition = bodyPoolItem.Object.Position;
                 bodyPoolItem.Body.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPosition.y - newPosition.y, targetPosition.x - newPosition.x) * Mathf.Rad2Deg - 90f);
-                bodyPoolItem.Body.transform.localScale = Vector3.one * 25 * bodyPoolItem.Object.HP / bodyPoolItem.Object.MaxHp;
+                bodyPoolItem.Body.transform.localScale = Vector3.one * 0.33f * bodyPoolItem.Object.HP / bodyPoolItem.Object.MaxHp;
             }
         }
 

@@ -81,7 +81,7 @@ namespace Assets.Scripts.Units
             if(target is AttackingEntity<TTargetType, TEntityType> attackingTarget) SpecialAttacksModule.ApplyEffects(attackingTarget);
 
             int attackDamage = UnitParams.Damage ?? 0;
-            if (GameController.RandomGenerator.Next(0, 100) * 0.01f < CriticalChance)
+            if (GameController.RandomGenerator.Next(0, 101) * 0.01f < CriticalChance)
             {
                 attackDamage = (int) (UnitParams.Damage ?? 0 * CriticalMultiplier);
                 Debug.Log("Critted!");

@@ -56,7 +56,7 @@ namespace Assets.Scripts
         {
             foreach (var bodyPoolItem in Pool.Where(item=>item.InUse).ToArray())
             {
-                bodyPoolItem.Body.transform.position = bodyPoolItem.Object.Position;
+                bodyPoolItem.Body.transform.localPosition = bodyPoolItem.Object.Position;
                 bodyPoolItem.Body.transform.rotation = Quaternion.Euler(bodyPoolItem.Object.Rotation);
             }
         }
