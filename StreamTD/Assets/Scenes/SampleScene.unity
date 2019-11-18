@@ -96,6 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -482,6 +483,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -584,13 +586,13 @@ MonoBehaviour:
   - {fileID: 2016474128}
   _expSlider: {fileID: 0}
   _mapFieldSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  _soldierSprite: {fileID: -3172619724193762364, guid: 517c1f9886ac7bf41a7e0dd554fa529a,
-    type: 3}
+  _soldierSprite: {fileID: 21300000, guid: d337f170f4fe7d94a9f69f18c6e5ad8a, type: 3}
   _enemySprite: {fileID: 3609919718646832585, guid: 517c1f9886ac7bf41a7e0dd554fa529a,
     type: 3}
-  _plasmaSprite: {fileID: 21300000, guid: 6b0e4408b5d10d34aada785a4e6dc3e3, type: 3}
-  _laserSprite: {fileID: 21300000, guid: 25d91890e8abf094895f1bac32f83f90, type: 3}
-  _ballisticSprite: {fileID: 21300000, guid: bb4f0150f318f6a4db69b37edb06aab3, type: 3}
+  _plasMaterial: {fileID: 2100000, guid: d92ef16facd382f4eaf87f24dc16c3e5, type: 2}
+  _laserMaterial: {fileID: 2100000, guid: 611db0cc064d893458e58ab608438aed, type: 2}
+  _ballisticMaterial: {fileID: 2100000, guid: 04dff1db8b96f8e41838e47019695e59, type: 2}
+  _projectileMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -642,7 +644,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -15}
+  m_LocalPosition: {x: 5.5, y: 0, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -714,6 +716,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1340,6 +1343,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1653,7 +1657,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1304606146}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1812566461}
@@ -1786,6 +1790,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2258,8 +2263,9 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1630777462}
   m_Enabled: 1
-  serializedVersion: 9
+  serializedVersion: 10
   m_Type: 1
+  m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
@@ -2398,7 +2404,8 @@ MonoBehaviour:
 
     Crit Chance: 5%
 
-    Evasion Chance: 0%
+    Evasion Chance:
+    0%
 
     Deflection: 0%
 
@@ -2639,6 +2646,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2835,16 +2843,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1025191162}
     m_Modifications:
-    - target: {fileID: 8295964659240784973, guid: 40fb2464ec31dc544a0424b0e71554fe,
-        type: 3}
-      propertyPath: m_Name
-      value: HQPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 8295964659240784973, guid: 40fb2464ec31dc544a0424b0e71554fe,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8295964659240784970, guid: 40fb2464ec31dc544a0424b0e71554fe,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2949,6 +2947,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8295964659240784973, guid: 40fb2464ec31dc544a0424b0e71554fe,
+        type: 3}
+      propertyPath: m_Name
+      value: HQPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 8295964659240784973, guid: 40fb2464ec31dc544a0424b0e71554fe,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8295964659240784971, guid: 40fb2464ec31dc544a0424b0e71554fe,
         type: 3}

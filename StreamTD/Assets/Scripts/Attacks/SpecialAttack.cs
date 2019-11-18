@@ -18,7 +18,7 @@ namespace Assets
         {
             var parameters = executor.UnitParams;
             var damage = (int)(parameters.Damage * 2 * parameters.CriticalMultiplier ?? 1);
-            ProjectilesController.Instance.InitializeProjectile(new Projectile(damage, executor.DamageType, executor.Position, executor, target, () => { }));
+            //ProjectilesController.Instance.InitializeProjectile(new Projectile(damage, executor.DamageType, executor.Position, executor, target, () => { }));
         }
 
         private const int BioHealRange = 2;
@@ -50,16 +50,16 @@ namespace Assets
         public static void RocketAttack(Soldier executor, EnemiesController controller, LivingEntity target)
         {
             var dmg = executor.UnitParams.Damage ?? 0;
-            ProjectilesController.Instance.InitializeProjectile(new Projectile(dmg, executor.DamageType, executor.Position, executor, target,
-                () =>
-                {
-                    var collection =
-                        controller.Entities.Where(entity => entity.IsInRange(target.Position, ExplosionRange)).ToArray();
-                    for (var i = 0; i < collection.Length; i++)
-                    {
-                        collection[i].GetHit(new Projectile(dmg, executor.DamageType));
-                    }
-                }));
+            //ProjectilesController.Instance.InitializeProjectile(new Projectile(dmg, executor.DamageType, executor.Position, executor, target,
+            //    () =>
+            //    {
+            //        var collection =
+            //            controller.Entities.Where(entity => entity.IsInRange(target.Position, ExplosionRange)).ToArray();
+            //        for (var i = 0; i < collection.Length; i++)
+            //        {
+            //            collection[i].GetHit(new Projectile(dmg, executor.DamageType));
+            //        }
+            //    }));
         }
 
         private const int AuraOfFireRange = 2;

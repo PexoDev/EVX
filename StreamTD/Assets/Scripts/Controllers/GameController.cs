@@ -52,9 +52,10 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Sprite _soldierSprite;
         [SerializeField] private Sprite _enemySprite;
 
-        [SerializeField] private Sprite _plasmaSprite;
-        [SerializeField] private Sprite _laserSprite;
-        [SerializeField] private Sprite _ballisticSprite;
+        [SerializeField] private Material _plasMaterial;
+        [SerializeField] private Material _laserMaterial;
+        [SerializeField] private Material _ballisticMaterial;
+        [SerializeField] private Mesh _projectileMesh;
 
         public EnemiesController EnemiesController { get; set; }
         public SoldiersController SoldiersController { get; set; }
@@ -81,7 +82,7 @@ namespace Assets.Scripts.Controllers
 
             Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite);
 
-            ProjectilesController = new ProjectilesController(_projectilePrefab, _projectilesParentTransform, _plasmaSprite, _laserSprite, _ballisticSprite);
+            ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
 
             EnemiesController.ParentCanvas = _mainCanvas;
         }
@@ -117,7 +118,7 @@ namespace Assets.Scripts.Controllers
             {
                 for (int i = 0; i < _gameSpeed; i++)
                 {
-                    ProjectilesController.ProcessProjectiles();
+                    //ProjectilesController.ProcessProjectiles();
                     SoldiersController.ProcessActions();
                     EnemiesController.ProcessActions();
                     CooldownController.UpdateCooldowns();

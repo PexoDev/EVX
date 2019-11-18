@@ -35,7 +35,7 @@ namespace Assets.Scripts.Units
 
         private readonly string _cooldownKey = Guid.NewGuid().ToString();
 
-        public virtual void GetHit(Projectile attack)
+        public virtual void GetHit(IAttack attack, LivingEntity attacker)
         {
             int damage = attack.Damage;
 
@@ -43,7 +43,7 @@ namespace Assets.Scripts.Units
             {
                 if (GameController.RandomGenerator.Next(0, 101) * 0.01f < DeflectionChance)
                 {
-                    DeflectAttack(attack);
+                    //DeflectAttack(attack);
                     return;
                 }
 
@@ -75,8 +75,8 @@ namespace Assets.Scripts.Units
 
         private void DeflectAttack(Projectile attack)
         {
-            ProjectilesController.Instance.InitializeProjectile(new Projectile(attack.Damage, attack.DamageType, Position, this, attack.Attacker,
-                () => attack.Attacker.GetHit(new Projectile(attack.Damage, attack.DamageType) { Attacker = this })));
+            //ProjectilesController.Instance.InitializeProjectile(new Projectile(attack.Damage, attack.DamageType, Position, this, attack.Attacker,
+            //    () => attack.Attacker.GetHit(new Projectile(attack.Damage, attack.DamageType) { Attacker = this })));
         }
 
         public virtual void Die()

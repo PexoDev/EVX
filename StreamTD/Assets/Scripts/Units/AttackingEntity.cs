@@ -89,8 +89,10 @@ namespace Assets.Scripts.Units
                 Debug.Log("Critted!");
             }
 
-            ProjectilesController.Instance.InitializeProjectile(new Projectile(attackDamage, DamageType, Position,this, target,
-                () => target.GetHit(new Projectile(Damage, DamageType){Attacker = this})));
+            IAttack attack = new Attack(attackDamage, DamageType);
+            ProjectilesController.Instance.InitializeProjectile(attack, this, target, () => target.GetHit(attack, this));
+                //new Projectile(attackDamage, DamageType, Position,this, target,
+                //() => target.GetHit(new Projectile(Damage, DamageType){Attacker = this})));
         }
 
         public virtual TTargetType LookForTarget()

@@ -94,7 +94,7 @@ namespace Assets.Scripts.Units
         where TTargetType: LivingEntity
         {
             if (!CooldownController.GetCooldown(_cooldownKey, Cooldown)) return;
-            entity.GetHit(new Projectile(DamagePerTick, DamageType.Default));
+            entity.GetHit(new Attack(DamagePerTick, DamageType.Default), null);
         }
 
         public UnitParameters GetNegativeEffects(UnitParameters baseParameters)
