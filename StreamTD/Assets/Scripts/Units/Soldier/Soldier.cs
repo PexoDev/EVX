@@ -1,66 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Assets.Scripts.Attacks;
-using Assets.Scripts.Controllers;
-using Assets.Scripts.Traits;
 using Assets.Scripts.Units.Enemy;
-using UnityEngine;
 
 namespace Assets.Scripts.Units.Soldier
 {
-    public abstract class Soldier: AttackingEntity<Soldier, Enemy.Enemy>
+    public class Soldier: AttackingEntity<Soldier, Enemy.Enemy>
     {
-        public static UnitParameters DefaultParams = new UnitParameters { Damage = 25, AttacksPerSecond = 1, MaxHealth = 250, Health = 250, AttackRange = 2};
-        public List<SelectableTrait> SelectableTraits = new List<SelectableTrait>();
-        public List<SelectableTrait> SelectableUltimateTraits = new List<SelectableTrait>();
-        public List<Action> SpecialSkills = new List<Action>();
+        public static UnitParameters DefaultParams = new UnitParameters { AttacksPerSecond = 3f, Health = 250, AttackRange = 3};
+        public static int DefaultDamage = 0;
 
-        public string Name { get; private set; }
-        public int Experience { get; set; }
+        public string Name { get; }
 
-        public async Task LevelUp()
-        {
-            if (Level >= LevelingController.MaxLevel) return;
-            if (Experience < LevelingController.ExperiencePerLevel[Level]) return;
-
-            LevelingUpPreset lup = LevelingController.GetLevelingUpPreset(this, Level);
-            Level++;
-
-            GameController.Mode = GameMode.Upgrading;
-            Action midAction = null;
-            if (lup.MidButtonAct != null) midAction = () => { lup.MidButtonAct(this); };
-            await Controller.Gc.UIController.SetButtonsBehaviour(lup.Title,lup.LeftButton,lup.MidButton,lup.RightButton,
-                ()=>lup.LeftButtonAct(this), midAction, ()=>lup.RightButtonAct(this)
-            );
-            GameController.Mode = GameMode.Play;
-        }
-
-        private InteractiveMapField _tile;
-        public InteractiveMapField Tile
-        {
-            get => _tile;
-            set
-            {
-                _tile = value;
-                if (_tile == null) return;
-                Move(_tile.Field.Position);
-            }
-        }
-
-        public int Level { get; set; }
         public int KillCount { get; set; }
 
-        protected Soldier(string name, InteractiveMapField tile, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc, dt,ht,up)
+        public Soldier(string name, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc,up)
         {
             Name = name;
-            Tile = tile;
-            SpecialAttacksModule.SpecialSkill = () => { if(SpecialSkills.Count>0)SpecialSkills[GameController.RandomGenerator.Next(0,SpecialSkills.Count)].Invoke(); };
-        }
 
-        protected Soldier(SoldiersController controller)
-        {
-            Controller = controller;
+            switch (ht)
+            {
+                case HealthType.Armor:
+                    up.Armor = up.Health / 2;
+                    break;
+                case HealthType.EnergyShields:
+                    up.EnergyShields = up.Health / 2;
+                    break;
+                case HealthType.EMF:
+                    up.EMF = up.Health / 2;
+                    break;
+            }
+
+            switch (dt)
+            {
+                case DamageType.Plasma:
+                    up.PlasmaDamage = DefaultDamage;
+                    break;
+                case DamageType.Ballistic:
+                    up.BallisticDamage = DefaultDamage;
+                    break;
+                case DamageType.Laser:
+                    up.LaserDamage = DefaultDamage;
+                    break;
+            }
         }
 
         public override string ToString()
@@ -71,13 +53,12 @@ namespace Assets.Scripts.Units.Soldier
         public override void Die()
         {
             base.Die();
-            Tile.Field.Type = MapFieldType.Empty;
-            Tile.ClickableObject.OnClickActions.Pop();
             Controller.RemoveInstance(this);
         }
 
         public override void AnimateHurt()
         {
+
         }
     }
 }

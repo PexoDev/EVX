@@ -1,36 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Attacks;
 using Assets.Scripts.Controllers;
+using Assets.Scripts.Units.Enemy;
 using UnityEngine;
 
 namespace Assets.Scripts.Units.Soldier
 {
     public class SoldiersController: EntitiesController<Soldier>
     {
-        private string _energyRegenCooldownKey = Guid.NewGuid().ToString();
-
-        public SoldiersController(GameController gc) : base(gc)
+        private EnemiesController _ec;
+        public SoldiersController(GameController gc, EnemiesController ec) : base(gc)
         {
+            _ec = ec;
         }
 
-        public bool SpawnSoldier(Soldier soldier, InteractiveMapField field)
+        public bool SpawnSoldier(InteractiveMapField field)
         {
             if (Entities.Count >= 10)
             {
                 Debug.Log("You can't have more than 10 soldiers at once!");
+                GameController.Mode = GameMode.Play;
                 return false;
             }
 
-            soldier.Tile = field;
+            var unit = new Unit(_ec, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType);
 
-            Entities.Add(soldier);
-            field.ClickableObject.OnClickActions.Push(async ()=>
+            Entities.AddRange(unit.Soldiers);
+            field.ClickableObject.OnClickActions.Push(() =>
             {
-                await soldier.LevelUp();
-                Gc.UIController.UpgradeManager.CurrentSoldier = soldier;
+                Gc.UIController.UpgradeManager.CurrentUnit = unit;
             });
 
+            GameController.Mode = GameMode.Play;
             return true;
         }
 
@@ -45,54 +48,14 @@ namespace Assets.Scripts.Units.Soldier
 
         public override void ProcessActions()
         {
-            ApplyDebuffs();
             ProcessAttacks();
             ProcessLivingEntities();
-            RegenEnergy();
-        }
-
-        private void RegenEnergy()
-        {
-            if (!CooldownController.GetCooldown(_energyRegenCooldownKey, 1)) return;
-
-            foreach (var soldier in Entities)
-            {
-                if (soldier.Alive)
-                    soldier.SpecialAttacksModule.Energy += soldier.SpecialAttacksModule.EnergyGainPerSecond;
-            }
-        }
-
-        private void ApplyDebuffs()
-        {
-            foreach (Soldier soldier in Entities)
-            {
-                if (!soldier.Alive) continue;
-
-                soldier.DOTDebuff?.UpdateDuration();
-                soldier.CCDebuff?.UpdateDuration();
-
-                if (soldier.DOTDebuff != null && !soldier.DOTDebuff.Active) soldier.DOTDebuff = null;
-                if (soldier.CCDebuff != null && !soldier.CCDebuff.Active) soldier.CCDebuff = null;
-
-                soldier.DOTDebuff?.ProcessEffect(soldier);
-            }
         }
 
         public override void RemoveInstance(Soldier entity)
         {
             base.RemoveInstance(entity);
             Gc.ScoreController.Add(-100);
-        }
-
-        public void GrantExperienceToSoldiers(Enemy.Enemy entity)
-        {
-            var targetingSoldiers = Entities.Where(s => s.CurrentTarget == entity).ToArray();
-            foreach (Soldier soldier in targetingSoldiers)
-            {
-                if (!soldier.Alive) return;
-                soldier.Experience += entity.ScoreValue / targetingSoldiers.Length;
-                soldier.KillCount++;
-            }
         }
     }
 }

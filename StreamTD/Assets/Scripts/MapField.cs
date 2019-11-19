@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
+using Assets.Scripts.Units.Soldier;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -34,12 +35,12 @@ namespace Assets.Scripts
 
         public Vector2 Position { get; set; }
 
-        public void PlaceSoldier(HQManager hqm, InteractiveMapField field)
+        public void PlaceSoldier(SoldiersController sc, InteractiveMapField field)
         {
             if (GameController.Mode != GameMode.Building) return;
             if (Type != MapFieldType.Empty) return;
 
-            if(hqm.PlaceSoldier(field))
+            if(sc.SpawnSoldier(field))
                 Type = MapFieldType.Soldier;
         }
     }

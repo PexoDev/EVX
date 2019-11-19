@@ -19,7 +19,6 @@ namespace Assets.Scripts.Controllers
         public ProjectilesController ProjectilesController { get; private set; }
         public PlayerBase PlayerBase { get; private set; }
         public ScoreController ScoreController { get; private set; } = new ScoreController();
-        public HQManager Hqm { get; private set; }
 
         private static GameMode _mode = GameMode.Play;
 
@@ -74,10 +73,8 @@ namespace Assets.Scripts.Controllers
         private void Start()
         {
             EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _soldierSprite, _soldierSprite, _soldierSprite);
-            SoldiersController = new SoldiersController(this);
-            Hqm = new HQManager(SoldiersController);
-
-            UIController = new UIController(this, _mainCanvas, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
+            SoldiersController = new SoldiersController(this, EnemiesController);
+            UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
             UIController.Instantiate();
 
             Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite);
@@ -118,7 +115,6 @@ namespace Assets.Scripts.Controllers
             {
                 for (int i = 0; i < _gameSpeed; i++)
                 {
-                    //ProjectilesController.ProcessProjectiles();
                     SoldiersController.ProcessActions();
                     EnemiesController.ProcessActions();
                     CooldownController.UpdateCooldowns();
@@ -153,12 +149,12 @@ namespace Assets.Scripts.Controllers
             UnitParameters defaultEnemySettings;
             if (RandomGenerator.Next(0, 101) < 25)
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, Damage = 1, AttackRange = 1, MaxHealth = 400, Health = 400, AttacksPerSecond = 0.5f };
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, LaserDamage = 1, AttackRange = 1, Health = 400, AttacksPerSecond = 0.5f };
                 _enemySpawnCooldown = 3f;
             }
             else 
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, Damage = 1, AttackRange = 1, MaxHealth = 40, Health = 40, AttacksPerSecond = 2f};
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, LaserDamage = 1, AttackRange = 1, Health = 40, AttacksPerSecond = 2f};
                 _enemySpawnCooldown = 0.75f;
             }
 

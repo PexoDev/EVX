@@ -59,27 +59,10 @@ namespace Assets.Scripts.Units.Enemy
 
         public override void ProcessActions()
         {
-            ApplyDebuffs();
             ProcessMovement();
             ProcessAttacks();
             ProcessLivingEntities();
         }
-
-        private void ApplyDebuffs()
-        {
-            foreach (Enemy enemy in Entities.ToArray())
-            {
-                enemy.DOTDebuff?.UpdateDuration();
-                enemy.CCDebuff?.UpdateDuration();
-
-                if (enemy.DOTDebuff != null && !enemy.DOTDebuff.Active) enemy.DOTDebuff = null;
-                if (enemy.CCDebuff != null && !enemy.CCDebuff.Active) enemy.CCDebuff = null;
-
-                if(enemy.DOTDebuff == null) return;
-                enemy.DOTDebuff.ProcessEffect(enemy);
-            }
-        }
-
         public EnemiesController(GameController gc, GameObject enemyPrefab, Transform enemiesParent, Sprite spriteLight, Sprite spriteMedium, Sprite spriteHeavy) : base(gc)
         {
             _pool = new ObjectBodyPool<Enemy, EnemyType>(enemyPrefab, enemiesParent, new Dictionary<EnemyType, Sprite> {
@@ -91,8 +74,6 @@ namespace Assets.Scripts.Units.Enemy
 
         public override void RemoveInstance(Enemy entity)
         {
-            Gc.SoldiersController.GrantExperienceToSoldiers(entity);
-
             Gc.ScoreController.Add(entity.ScoreValue);
             base.RemoveInstance(entity);
 

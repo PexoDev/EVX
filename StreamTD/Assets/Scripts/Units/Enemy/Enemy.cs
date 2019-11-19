@@ -1,8 +1,6 @@
 ﻿using Assets.Scripts.Attacks;
-using Assets.Scripts.Traits;
 using Assets.Scripts.Units.Soldier;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.Units.Enemy
 {
@@ -14,11 +12,13 @@ namespace Assets.Scripts.Units.Enemy
         private PlayerBase _targetBase;
 
         public bool Frozen { get; set; }
+        private UnitParameters _up;
 
-        protected Enemy(MapField[] path, SoldiersController sc, EnemiesController ec, PlayerBase targetBase, DamageType dt, HealthType ht, UnitParameters up, Sprite sprite) : base(sc, ec, dt, ht, up)
+        protected Enemy(MapField[] path, SoldiersController sc, EnemiesController ec, PlayerBase targetBase, DamageType dt, HealthType ht, UnitParameters up, Sprite sprite) : base(sc, ec, up)
         {
             PathToTraverse = path;
             _targetBase = targetBase;
+            _up = up;
         }
 
         public int CurrentFieldIndex { get; set; }
@@ -39,7 +39,7 @@ namespace Assets.Scripts.Units.Enemy
 
             if(PathToTraverse[CurrentFieldIndex].Type != MapFieldType.Path) return;
             var targetPosition = PathToTraverse[CurrentFieldIndex].Position;
-            var newPosition = Vector2.MoveTowards(Position, targetPosition, UnitParams.MovementSpeed ?? 0);
+            var newPosition = Vector2.MoveTowards(Position, targetPosition, _up.MovementSpeed ?? 0);
             Move(newPosition);
         }
 

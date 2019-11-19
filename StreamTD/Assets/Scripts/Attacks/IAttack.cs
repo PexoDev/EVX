@@ -2,7 +2,12 @@
 {
     public interface IAttack
     {
-        int Damage { get; set; }
-        DamageType DamageType { get; set; }
+        int LaserDamage { get; set; }
+        int PlasmaDamage{ get; set; }
+        int BallisticDamage { get; set; }
+        int DefaultDamage { get; set; }
+
+        int OverallDamage { get; }
     }
+
 }

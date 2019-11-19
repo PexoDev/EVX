@@ -136,6 +136,7 @@ namespace Assets.Scripts
             Map[i][j].Field.Position = position;
             Map[i][j].GameObject.transform.localPosition = position;
             Map[i][j].SpriteRenderer.sprite = mapFieldSprite;
+            Map[i][j].SpriteRenderer.sortingOrder = -30;
         }
 
         private void AddListeners(GameController gc, int i, int j)
@@ -143,7 +144,7 @@ namespace Assets.Scripts
             Map[i][j].Field.OnTypeChanged += () => RenderTile(i, j);
             Map[i][j].ClickableObject.OnClickActions.Push(() =>
             {
-                Map[i][j].Field.PlaceSoldier(gc.Hqm, Map[i][j]);
+                Map[i][j].Field.PlaceSoldier(gc.SoldiersController, Map[i][j]);
                 Render();
             });
         }

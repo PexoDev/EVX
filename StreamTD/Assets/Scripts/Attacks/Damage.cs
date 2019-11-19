@@ -15,17 +15,17 @@ namespace Assets.Scripts.Attacks
             {DamageType.Plasma, (HealthType.EMF, HealthType.Armor)},
         };
 
-        public static int CalculateDamage(IAttack attack, HealthType healthType, bool fluctuate = true)
+        public static int CalculateDamage(int damage, DamageType type, HealthType healthType, bool fluctuate = true)
         {
-            float calculatedDamage = attack.Damage;
+            float calculatedDamage = damage;
             //Adding a little random damage fluctuation
             if (fluctuate)
                 calculatedDamage *= (1f + GameController.RandomGenerator.Next(-10,10)*0.01f);
 
-            if (attack.DamageType == DamageType.Default) return (int)calculatedDamage;
+            if (type == DamageType.Default) return (int)calculatedDamage;
 
-            if (_damageTriangle[attack.DamageType].ResistantType == healthType) calculatedDamage *= WeakMultiplier;
-            if (_damageTriangle[attack.DamageType].VulnerableType == healthType) calculatedDamage *= StrongMultiplier;
+            if (_damageTriangle[type].ResistantType == healthType) calculatedDamage *= WeakMultiplier;
+            if (_damageTriangle[type].VulnerableType == healthType) calculatedDamage *= StrongMultiplier;
 
             return (int) calculatedDamage;
         }

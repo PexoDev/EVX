@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Scripts.Units;
+﻿using Assets.Scripts.Units;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
@@ -15,12 +14,11 @@ namespace Assets.Scripts.Attacks
         public ProjectileBody Body => _em.GetComponentData<ProjectileBody>(Entity);
         public Translation Position => _em.GetComponentData<Translation>(Entity);
 
-        public bool InUse { get; set; }
         public IAttack Attack { get; set; }
         public LivingEntity Attacker { get; set; }
         public LivingEntity Target { get; set; }
 
-        private EntityManager _em;
+        private readonly EntityManager _em;
 
         public Projectile(EntityManager em, IAttack attackData, LivingEntity attacker, LivingEntity target, int poolId, Mesh meshTexture, Material mat)
         {
@@ -34,12 +32,12 @@ namespace Assets.Scripts.Attacks
             em.SetComponentData(Entity, new ProjectileBody
             {
                 Target = new float3(target.Position.x, target.Position.y, 0),
-                Speed = 5f * Time.fixedDeltaTime,
+                Speed = 7.5f * Time.fixedDeltaTime,
                 Id = poolId
             });
             em.SetComponentData(Entity, new Scale
             {
-                Value = Attack.Damage < 100 ? Attack.Damage > 25 ? Attack.Damage * .04f : .66f : 4f 
+                Value = Attack.OverallDamage < 100 ? Attack.OverallDamage > 16 ? Attack.OverallDamage * .02f : .33f : 2f 
             });
             em.SetComponentData(Entity, new Translation
             {
@@ -54,24 +52,9 @@ namespace Assets.Scripts.Attacks
             em.SetSharedComponentData(Entity, new RenderMesh
             {
                 mesh = meshTexture,
-                material = mat
+                material = mat,
+                layer = 10
             });
         }
-
-        //public void Move()
-        //{
-        //    Move(Vector2.MoveTowards(Position, Target.Position, Speed * Time.fixedDeltaTime));
-        //    Rotation = new Vector3(0, 0, Mathf.Atan2(Target.Position.y - Position.y, Target.Position.x - Position.x) * Mathf.Rad2Deg);
-        //    if (IsInRange(Target.Position, 0.01f))
-        //        DisposeProjectile();
-        //}
-    }
-
-    public struct ProjectileBody : IComponentData
-    {
-        public float3 Target { get; set; }
-        public float Speed { get; set; }
-        public int Id { get; set; }
-        public bool InUse { get; set; }
     }
 }

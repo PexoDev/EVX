@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Assets.Scripts;
-using Assets.Scripts.Attacks;
-using Assets.Scripts.Traits;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
@@ -16,8 +14,6 @@ namespace Assets
     {
         public static void SniperStrike(Soldier executor, LivingEntity target)
         {
-            var parameters = executor.UnitParams;
-            var damage = (int)(parameters.Damage * 2 * parameters.CriticalMultiplier ?? 1);
             //ProjectilesController.Instance.InitializeProjectile(new Projectile(damage, executor.DamageType, executor.Position, executor, target, () => { }));
         }
 
@@ -26,7 +22,6 @@ namespace Assets
         {
             foreach (var entity in controller.Entities.Where(entity => entity.IsInRange(executor.Position,BioHealRange)))
             {
-                entity.HP += executor.UnitParams.HealingPerSecond ?? 0 * 2;
             }
         }
 
@@ -37,19 +32,15 @@ namespace Assets
             Task.Run(() =>
             {
                 //todo Bug risk, what if leveled up during being shielded? Improved deflection would be lost 
-                var cacheDeflection = executor.UnitParams.DeflectionChance;
-                executor.UnitParams.DeflectionChance = 1f;
                 Debug.Log("Start"+DateTime.Now.Second);
                 Thread.Sleep(DeflectionShieldDuration);
                 Debug.Log("end" + DateTime.Now.Second);
-                executor.UnitParams.DeflectionChance = cacheDeflection;
             });
         }
 
         private const int ExplosionRange = 1;
         public static void RocketAttack(Soldier executor, EnemiesController controller, LivingEntity target)
         {
-            var dmg = executor.UnitParams.Damage ?? 0;
             //ProjectilesController.Instance.InitializeProjectile(new Projectile(dmg, executor.DamageType, executor.Position, executor, target,
             //    () =>
             //    {
@@ -67,8 +58,6 @@ namespace Assets
         {
             foreach (var entity in controller.Entities.Where(entity => entity.IsInRange(executor.Position, AuraOfFireRange)))
             {
-                if(executor.SpecialAttacksModule.Debuff == null) return;
-                entity.DOTDebuff = executor.SpecialAttacksModule.Debuff;
             }
         }
 

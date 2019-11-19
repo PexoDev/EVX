@@ -1,32 +1,48 @@
 ﻿using System;
 using System.Reflection;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Assets.Scripts.Units
 {
-    //Fighting Entities Statistics:
-    //Damage[p]
-    //Attack Frequency[hz]
-    //Health[p]
-    //Health Regeneration Per Second [p/s]
-    //Attack AttackRange[distance units]
-    //Damage Resistance[p]
-    //Critical Strike Chance[%]
-    //Critical Strike Multiplier[%]
-    //Evasion Chance[%]
-    //Deflection Chance[%]
-    //“Energy” [100 points]
-    //“Energy” Gain[p/s]
-    //Special Effect Chance[%]
-    //Special Effect Duration[s]
-    //Special Effect Damage per tick[p]
-    //Special Effect Slow[%]
-    //Special Effect Attack Speed Reduction[%]
-    //Special Effect Increased Damage Intake[%]
-
     public class UnitParameters
     {
+        public event Action<UnitParameters> OnValueChanged = up => { };
+
+        public void ValueChanged()
+        {
+            OnValueChanged(this);
+        }
+
+        public int? Health { get; set; }
+        public int? RegenerationPerSecond { get; set; }
+
+        public int? Armor { get; set; }
+        public int? EMF { get; set; }
+        public int? EnergyShields { get; set; }
+
+        public int? PlasmaThreshold { get; set; }
+        public int? LaserThreshold { get; set; }
+        public int? BallisticThreshold { get; set; }
+
+        public float? PlasmaResistance { get; set; }
+        public float? LaserResistance { get; set; }
+        public float? BallisticResistance { get; set; }
+
+        public float? EvasionChance { get; set; }
+        public float? DeflectionChance { get; set; }
+        public float? MovementSpeed { get; set; }
+        public float? Luck { get; set; }
+
+        public int? AttackRange { get; set; }
+        public float? AttacksPerSecond { get; set; }
+
+        public int? PlasmaDamage { get; set; }
+        public int? LaserDamage { get; set; }
+        public int? BallisticDamage { get; set; }
+
+        public float? CriticalChance { get; set; }
+        public float? CriticalMultiplier { get; set; }
+        public int? ClipSize { get; set; }
+        public float? ReloadTime { get; set; }
 
         public static UnitParameters GetCopy(UnitParameters up)
         {
@@ -58,9 +74,35 @@ namespace Assets.Scripts.Units
             return copy;
         }
 
+        public static UnitParameters operator * (UnitParameters up, float factor)
+        {
+            return up.IncreaseAllByFactor(factor);
+        }
+
+        public static UnitParameters operator + (UnitParameters a, UnitParameters b)
+        {
+            foreach (PropertyInfo property in typeof(UnitParameters).GetProperties())
+            {
+                var truePropertyType = Nullable.GetUnderlyingType(property.PropertyType);
+                var valueA = property.GetValue(a);
+                var valueB = property.GetValue(b);
+                if (valueB == null) continue;
+
+                var castValueA = Convert.ChangeType(valueA, truePropertyType);
+                var castValueB = Convert.ChangeType(valueA, truePropertyType);
+
+                object sum = null;
+                if (truePropertyType == typeof(int)) sum = ((int?)valueA ?? 0) + (int?) valueB;
+                if (truePropertyType == typeof(float)) sum = ((float?)valueA ?? 0) + (float?) valueB;
+
+                property.SetValue(a, Convert.ChangeType(sum, truePropertyType));
+            }
+
+            return a;
+        }
+
         public UnitParameters IncreaseAllByFactor(float factor)
         {
-            UnitParameters copy = new UnitParameters();
             foreach (PropertyInfo property in GetType().GetProperties())
             {
                 var truePropertyType = Nullable.GetUnderlyingType(property.PropertyType);
@@ -71,34 +113,10 @@ namespace Assets.Scripts.Units
                 object increasedValue = null;
                 if (truePropertyType == typeof(int)) increasedValue = (int) castValue * (1 + factor);
                 if (truePropertyType == typeof(float)) increasedValue = (float) castValue * (1 + factor);
-                property.SetValue(copy, Convert.ChangeType(increasedValue, truePropertyType));
+                property.SetValue(this, Convert.ChangeType(increasedValue, truePropertyType));
             }
-            return copy;
+
+            return this;
         }
-
-        public int? MaxHealth { get; set; }
-        public int? Health { get; set; }
-        public int? HealingPerSecond { get; set; }
-        public int? DamageThreshold { get; set; }
-        public float? DamageResistance { get; set; }
-        public float? EvasionChance { get; set; }
-        public float? DeflectionChance { get; set; }
-        public float? MovementSpeed { get; set; }
-
-        public int? AttackRange { get; set; }
-        public float? AttacksPerSecond { get; set; }
-        public int? Damage { get; set; }
-        public float? CriticalChance { get; set; }
-        public float? CriticalMultiplier { get; set; }
-
-        public int? MaxEnergy { get; set; }
-        public int? Energy { get; set; }
-        public int? EnergyGainPerSecond { get; set; }
-        public float? SpecialEffectChance { get; set; }
-        public float? SpecialEffectDuration { get; set; }
-        public int? SpecialEffectDamagePerTick { get; set; }
-        public float? SpecialEffectSlow { get; set; }
-        public float? SpecialEffectAttackSpeedReduction { get; set; }
-        public float? SpecialEffectDamageIntakeIncreased { get; set; }
     }
 }

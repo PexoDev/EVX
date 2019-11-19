@@ -7,8 +7,6 @@ namespace Assets.Scripts.Controllers
 {
     public class UIController
     {
-        private readonly Canvas _canvas;
-
         private readonly Button _choiceLeft;
         private readonly Text _choiceLeftText;
         private readonly Canvas _choiceMenu;
@@ -24,12 +22,11 @@ namespace Assets.Scripts.Controllers
         private GameObject _panelPrefab;
         public UpgradeUIManager UpgradeManager;
 
-        public UIController(GameController gc, Canvas mainCanvas, Canvas choiceMenu, Text choiceText, Button choiceLeft,
+        public UIController(GameController gc, Canvas choiceMenu, Text choiceText, Button choiceLeft,
             Button choiceMid, Button choiceRight, Button hqSoldiersTile, Text nameText, Text describText, SpriteRenderer[] levelPoints,
             Slider expSlider)
         {
             _gc = gc;
-            _canvas = mainCanvas;
             _choiceMenu = choiceMenu;
             _choiceText = choiceText;
 
@@ -49,7 +46,7 @@ namespace Assets.Scripts.Controllers
 
         public void Instantiate()
         {
-            HQUIManager.Instantiate(_canvas, SetButtonsBehaviour, _gc.Hqm, _gc.EnemiesController,
+            HQUIManager.Instantiate(SetButtonsBehaviour, _gc.EnemiesController,
                 _gc.SoldiersController);
         }
 

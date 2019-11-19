@@ -8,7 +8,7 @@ namespace Assets.Scripts.Controllers
 {
     public class UpgradeUIManager
     {
-        private Soldier _currentSoldier;
+        private Unit _currentUnit;
         private readonly Canvas _choiceMenuCanvas;
         private readonly Button _choiceLeft;
         private readonly Button _choiceMid;
@@ -28,29 +28,29 @@ namespace Assets.Scripts.Controllers
             _experienceSlider = expSlider;
         }
 
-        public Soldier CurrentSoldier
+        public Unit CurrentUnit
         {
-            get => _currentSoldier;
+            get => _currentUnit;
             set
             {
                 _choiceMenuCanvas.enabled = true;
 
 
-                _currentSoldier = value;
+                _currentUnit = value;
                 Render();
             }
         }
 
         public void Render()
         {
-            if(CurrentSoldier == null) return;
+            if(CurrentUnit == null) return;
 
-            _nameText.text = CurrentSoldier.Name;
+            //_nameText.text = CurrentUnit.Name;
 
             _describText.text = "";
             foreach (PropertyInfo property in typeof(UnitParameters).GetProperties())
             {
-                _describText.text += $"{property.Name}: {property.GetValue(CurrentSoldier.UnitParams)}\n";
+                _describText.text += $"{property.Name}: {property.GetValue(CurrentUnit.UP)}\n";
             }
         }
     }
