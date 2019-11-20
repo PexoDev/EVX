@@ -8,29 +8,29 @@ namespace Assets.Scripts.Units
     {
         private readonly string _cooldownKey = Guid.NewGuid().ToString();
 
-        private readonly UnitParameters _up;
+        public UnitParameters _up;
 
         protected int Hp;
 
         protected LivingEntity(UnitParameters up)
         {
             _up = up;
-            Hp = up.Health ?? 1;
+            Hp = up.Health;
             _up.OnValueChanged += newUp => UpdateParams();
         }
 
         public bool Targetable { get; set; } = true;
         public bool Alive { get; private set; } = true;
 
-        public int MaxHp => _up.Health ?? 1;
+        public int MaxHp => _up.Health;
 
         public Health Armor { get; set; } = new Health {Type = HealthType.Armor};
         public Health EMF { get; set; } = new Health {Type = HealthType.EMF};
         public Health EnergyShields { get; set; } = new Health {Type = HealthType.EnergyShields};
 
-        protected int HealingPerSecond => _up.RegenerationPerSecond ?? 0;
-        protected float DeflectionChance => _up.DeflectionChance ?? 0;
-        protected float EvasionChance => _up.EvasionChance ?? 0;
+        protected int HealingPerSecond => _up.RegenerationPerSecond;
+        protected float DeflectionChance => _up.DeflectionChance;
+        protected float EvasionChance => _up.EvasionChance;
 
         public virtual int HP
         {
@@ -48,22 +48,22 @@ namespace Assets.Scripts.Units
         private void UpdateParams()
         {
             bool fill = EMF.MaxValue == 0;
-            EMF.MaxValue = _up.EMF ?? 0;
+            EMF.MaxValue = _up.EMF;
             if (fill) EMF.Value = EMF.MaxValue;
-            EMF.Threshold = _up.BallisticThreshold ?? 0;
-            EMF.Resistance = _up.BallisticResistance ?? 0;
+            EMF.Threshold = _up.BallisticThreshold;
+            EMF.Resistance = _up.BallisticResistance;
 
             fill = Armor.MaxValue == 0;
-            Armor.MaxValue = _up.Armor ?? 0;
+            Armor.MaxValue = _up.Armor;
             if (fill) Armor.Value = Armor.MaxValue;
-            Armor.Threshold = _up.PlasmaThreshold ?? 0;
-            Armor.Resistance = _up.PlasmaResistance ?? 0;
+            Armor.Threshold = _up.PlasmaThreshold;
+            Armor.Resistance = _up.PlasmaResistance;
 
             fill = EnergyShields.MaxValue == 0;
-            EnergyShields.MaxValue = _up.EnergyShields ?? 0;
+            EnergyShields.MaxValue = _up.EnergyShields;
             if (fill) EnergyShields.Value = EnergyShields.MaxValue;
-            EnergyShields.Threshold = _up.LaserThreshold ?? 0;
-            EnergyShields.Resistance = _up.LaserResistance ?? 0;
+            EnergyShields.Threshold = _up.LaserThreshold;
+            EnergyShields.Resistance = _up.LaserResistance;
         }
 
         public virtual void GetHit(IAttack attack, LivingEntity attacker)

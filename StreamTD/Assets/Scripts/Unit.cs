@@ -1,13 +1,13 @@
 ﻿using System;
-using Assets.Scripts;
 using Assets.Scripts.Attacks;
+using Assets.Scripts.Controllers;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
+using Boo.Lang;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Assets
+namespace Assets.Scripts
 {
     public class Unit : LivingEntity
     {
@@ -19,6 +19,8 @@ namespace Assets
 
         private Vector2 _unitPosition;
         public UnitParameters UP { get; private set; }
+
+        public List<Action<Soldier,Enemy>> OnHitActions = new List<Action<Soldier, Enemy>>();
 
         public Action<UnitParameters> ChangeParameters;
 
@@ -42,6 +44,10 @@ namespace Assets
             {
                 UP = parameters;
                 UP.ValueChanged();
+                foreach (Soldier soldier in Soldiers)
+                {
+                    soldier._up = UP;
+                }
             };
 
             for (var i = 0; i < Soldiers.Length; i++)

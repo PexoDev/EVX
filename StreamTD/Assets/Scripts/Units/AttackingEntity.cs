@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Controllers;
 
@@ -10,19 +12,21 @@ namespace Assets.Scripts.Units
         where TTargetType : LivingEntity
         where TEntityType : LivingEntity
     {
-        public List<Action<TTargetType>> OnHitEffects = new List<Action<TTargetType>>();
+        public List<Action<AttackingEntity<TEntityType, TTargetType>, TTargetType>> OnHitEffects = new List<Action<AttackingEntity<TEntityType, TTargetType>, TTargetType>>();
 
         public EntitiesController<TEntityType> Controller { get; set; }
         public EntitiesController<TTargetType> TargetsController { get; set; }
 
-        protected float CriticalChance => _up.CriticalChance ?? 0;
-        protected float CriticalMultiplier => _up.CriticalMultiplier ?? 0;
-        protected int AttackRange => _up.AttackRange ?? 0;
+        protected float CriticalChance => _up.CriticalChance;
+        protected float CriticalMultiplier => _up.CriticalMultiplier;
+        protected int AttackRange => _up.AttackRange;
+        private int _bulletsCount;
 
         protected Attack DefaultAttack => new Attack
         {
-            BallisticDamage = _up.BallisticDamage ?? 0, LaserDamage = _up.LaserDamage ?? 0,
-            PlasmaDamage = _up.PlasmaDamage ?? 0
+            BallisticDamage = _up.BallisticDamage,
+            LaserDamage = _up.LaserDamage,
+            PlasmaDamage = _up.PlasmaDamage
         };
 
         private readonly string _cooldownKey = Guid.NewGuid().ToString();
@@ -35,21 +39,33 @@ namespace Assets.Scripts.Units
             TargetsController = targetsController;
             Controller = entitiesController;
 
-            _up = up;
+            _bulletsCount = _up.ClipSize;
         }
-
-        private readonly UnitParameters _up;
 
         public virtual void AutoAttack()
         {
             Attack(LookForTarget());
         }
 
+        private bool _isReloading;
         protected void Attack(TTargetType target)
         {
-            if ((_up.AttacksPerSecond ?? -1) <= 0) return;
+            if (_isReloading) return;
+            if (_bulletsCount <= 0)
+            {
+                Task.Run(() =>
+                {
+                    _isReloading = true;
+                    if(_up.ReloadTime > 0)
+                        Thread.Sleep((int)(_up.ReloadTime * 1000));
+                    _bulletsCount = _up.ClipSize;
+                    _isReloading = false;
+                });
+                return;
+            }
+            if (_up.AttacksPerSecond <= 0.01f) return;
             if (target == null) return;
-            if (!CooldownController.GetCooldown(_cooldownKey, 1 / (float)_up.AttacksPerSecond)) return;
+            if (!CooldownController.GetCooldown(_cooldownKey, 1 / _up.AttacksPerSecond)) return;
 
             Attack attack = DefaultAttack;
             if (GameController.RandomGenerator.Next(0, 101) * 0.01f < CriticalChance)
@@ -58,12 +74,14 @@ namespace Assets.Scripts.Units
             void FinalHitAction()
             {
                 target.GetHit(attack, this);
-                foreach (Action<TTargetType> action in OnHitEffects.ToArray())
-                    action?.Invoke(target);
+                foreach (var action in OnHitEffects.ToArray())
+                    action?.Invoke(this, target);
             }
 
             ProjectilesController.Instance.InitializeProjectile(attack, this, target, FinalHitAction);
+            _bulletsCount--;
         }
+
 
         public virtual TTargetType LookForTarget()
         {

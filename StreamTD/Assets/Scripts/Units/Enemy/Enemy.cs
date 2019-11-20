@@ -39,7 +39,7 @@ namespace Assets.Scripts.Units.Enemy
 
             if(PathToTraverse[CurrentFieldIndex].Type != MapFieldType.Path) return;
             var targetPosition = PathToTraverse[CurrentFieldIndex].Position;
-            var newPosition = Vector2.MoveTowards(Position, targetPosition, _up.MovementSpeed ?? 0);
+            var newPosition = Vector2.MoveTowards(Position, targetPosition, _up.MovementSpeed);
             Move(newPosition);
         }
 

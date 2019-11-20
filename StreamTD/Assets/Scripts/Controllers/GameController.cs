@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using System.Linq;
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Units;
@@ -158,7 +159,7 @@ namespace Assets.Scripts.Controllers
                 _enemySpawnCooldown = 0.75f;
             }
 
-            defaultEnemySettings = defaultEnemySettings.IncreaseAllByFactor(_difficulty);
+            defaultEnemySettings *= 1 + _difficulty;
             EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, _enemySprite));
         }
     }

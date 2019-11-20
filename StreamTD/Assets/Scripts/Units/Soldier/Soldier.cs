@@ -1,48 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Attacks;
+﻿using Assets.Scripts.Attacks;
 using Assets.Scripts.Units.Enemy;
 
 namespace Assets.Scripts.Units.Soldier
 {
     public class Soldier: AttackingEntity<Soldier, Enemy.Enemy>
     {
-        public static UnitParameters DefaultParams = new UnitParameters { AttacksPerSecond = 3f, Health = 250, AttackRange = 3};
         public static int DefaultDamage = 0;
+        public static UnitParameters DefaultParams = new UnitParameters
+        {
+            AttacksPerSecond = 4f,
+            Health = 100,
+            AttackRange = 3,
+            ClipSize = 20,
+            AttackAccuracy = 0.9f,
+            CriticalChance = 0.05f
+        };
 
         public string Name { get; }
 
         public int KillCount { get; set; }
 
-        public Soldier(string name, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc,up)
+        public Soldier(string name, EnemiesController ec, SoldiersController sc, DamageType dt, HealthType ht, UnitParameters up) : base(ec, sc, up)
         {
             Name = name;
 
             switch (ht)
             {
                 case HealthType.Armor:
-                    up.Armor = up.Health / 2;
+                    _up.Armor = up.Health;
                     break;
                 case HealthType.EnergyShields:
-                    up.EnergyShields = up.Health / 2;
+                    _up.EnergyShields = up.Health;
                     break;
                 case HealthType.EMF:
-                    up.EMF = up.Health / 2;
+                    _up.EMF = up.Health;
                     break;
             }
 
             switch (dt)
             {
                 case DamageType.Plasma:
-                    up.PlasmaDamage = DefaultDamage;
+                    _up.PlasmaDamage = DefaultDamage * 2;
+                    _up.AttacksPerSecond /= 2;
                     break;
                 case DamageType.Ballistic:
-                    up.BallisticDamage = DefaultDamage;
+                    _up.BallisticDamage = DefaultDamage / 2;
+                    _up.AttacksPerSecond *= 2;
                     break;
                 case DamageType.Laser:
-                    up.LaserDamage = DefaultDamage;
+                    _up.LaserDamage = DefaultDamage;
                     break;
             }
+
+            _up.ValueChanged();
         }
 
         public override string ToString()

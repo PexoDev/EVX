@@ -9,7 +9,6 @@ namespace Assets.Scripts.Units.Enemy
     {
         public static Canvas ParentCanvas;
 
-
         private readonly ObjectBodyPool<Enemy, EnemyType> _pool;
         private GameObject _enemyPrefab;
         private MapField _tile;
