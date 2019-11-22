@@ -32,7 +32,7 @@ namespace Assets.Scripts.Attacks
             em.SetComponentData(Entity, new ProjectileBody
             {
                 Target = new float3(target.Position.x, target.Position.y, 0),
-                Speed = 7.5f * Time.fixedDeltaTime,
+                Speed = 5f * Time.fixedDeltaTime,
                 Id = poolId
             });
             em.SetComponentData(Entity, new Scale

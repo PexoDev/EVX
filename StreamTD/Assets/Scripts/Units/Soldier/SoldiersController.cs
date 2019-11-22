@@ -11,21 +11,16 @@ namespace Assets.Scripts.Units.Soldier
     public class SoldiersController: EntitiesController<Soldier>
     {
         private EnemiesController _ec;
-        public SoldiersController(GameController gc, EnemiesController ec) : base(gc)
+        private Sprite[] _soldierSprites;
+        public SoldiersController(GameController gc, EnemiesController ec, Sprite[] soldierSprites) : base(gc)
         {
             _ec = ec;
+            _soldierSprites = soldierSprites;
         }
 
         public bool SpawnSoldier(InteractiveMapField field)
         {
-            if (Entities.Count >= 10)
-            {
-                Debug.Log("You can't have more than 10 soldiers at once!");
-                GameController.Mode = GameMode.Play;
-                return false;
-            }
-
-            var unit = new Unit(_ec, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType);
+            var unit = new Unit(_ec, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
 
             Entities.AddRange(unit.Soldiers);
             field.ClickableObject.OnClickActions.Push(() =>

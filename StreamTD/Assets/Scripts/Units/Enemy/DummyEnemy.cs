@@ -7,7 +7,7 @@ namespace Assets.Scripts.Units.Enemy
     public class DummyEnemy: Enemy
     {
         public DummyEnemy(MapField[] path, SoldiersController sc, EnemiesController ec, PlayerBase pb, DamageType dt,
-            HealthType ht, UnitParameters up, Sprite sprite) : base(path, sc, ec, pb, dt, ht, up, sprite)
+            HealthType ht, UnitParameters up, int defaultDamage, Sprite sprite) : base(path, sc, ec, pb, dt, ht, up, defaultDamage, sprite)
         {
 
         }

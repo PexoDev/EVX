@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Scripts.Attacks;
@@ -22,6 +23,8 @@ namespace Assets.Scripts.Controllers
         public ScoreController ScoreController { get; private set; } = new ScoreController();
 
         private static GameMode _mode = GameMode.Play;
+
+        [SerializeField] private EQCanvasController _eqCanvasController;
 
         [SerializeField] private GameObject _enemyPrefab;
         [SerializeField] private GameObject _mapFieldObjectPrefab;
@@ -49,7 +52,7 @@ namespace Assets.Scripts.Controllers
 
         [SerializeField] private Sprite _mapFieldSprite;
 
-        [SerializeField] private Sprite _soldierSprite;
+        [SerializeField] private Sprite[] _soldierSprites;
         [SerializeField] private Sprite _enemySprite;
 
         [SerializeField] private Material _plasMaterial;
@@ -73,8 +76,8 @@ namespace Assets.Scripts.Controllers
 
         private void Start()
         {
-            EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _soldierSprite, _soldierSprite, _soldierSprite);
-            SoldiersController = new SoldiersController(this, EnemiesController);
+            EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _enemySprite, _enemySprite, _enemySprite);
+            SoldiersController = new SoldiersController(this, EnemiesController, _soldierSprites);
             UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
             UIController.Instantiate();
 
@@ -100,25 +103,26 @@ namespace Assets.Scripts.Controllers
                 }
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha1)) _gameSpeed = 1;
-            if (Input.GetKeyDown(KeyCode.Alpha2)) _gameSpeed = 2;
-            if (Input.GetKeyDown(KeyCode.Alpha3)) _gameSpeed = 4;
-            if (Input.GetKeyDown(KeyCode.Alpha4)) _gameSpeed = 8;
+            if (Input.GetKeyDown(KeyCode.Alpha1)) GameSpeed = 1;
+            if (Input.GetKeyDown(KeyCode.Alpha2)) GameSpeed = 2;
+            if (Input.GetKeyDown(KeyCode.Alpha3)) GameSpeed = 4;
+            if (Input.GetKeyDown(KeyCode.Alpha4)) GameSpeed = 8;
+            if (Input.GetKeyDown(KeyCode.X)) _eqCanvasController.AddNewItem(ConsumableItemsList.AllConsumableItems[RandomGenerator.Next(0,ConsumableItemsList.AllConsumableItems.Length)], this);
 
             ProcessGameLoop();
         }
 
-        private int _gameSpeed = 1;
+        public static int GameSpeed = 1;
 
         private void ProcessGameLoop()
         {
             if (Mode == GameMode.Play)
             {
-                for (int i = 0; i < _gameSpeed; i++)
+                for (int i = 0; i < GameSpeed; i++)
                 {
                     SoldiersController.ProcessActions();
                     EnemiesController.ProcessActions();
-                    CooldownController.UpdateCooldowns();
+                    CooldownController.UpdateCooldowns(GameSpeed);
                     GenerateWave();
                 }
             }
@@ -150,17 +154,19 @@ namespace Assets.Scripts.Controllers
             UnitParameters defaultEnemySettings;
             if (RandomGenerator.Next(0, 101) < 25)
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, LaserDamage = 1, AttackRange = 1, Health = 400, AttacksPerSecond = 0.5f };
-                _enemySpawnCooldown = 3f;
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, LaserDamage = 1, AttackRange = 1, Health = 400, AttacksPerSecond = 0.5f, ClipSize = 10};
+                _enemySpawnCooldown = 1f;
             }
             else 
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, LaserDamage = 1, AttackRange = 1, Health = 40, AttacksPerSecond = 2f};
-                _enemySpawnCooldown = 0.75f;
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, LaserDamage = 1, AttackRange = 1, Health = 40, AttacksPerSecond = 2f, ClipSize = 10 };
+                _enemySpawnCooldown = 0.25f;
             }
 
             defaultEnemySettings *= 1 + _difficulty;
-            EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, _enemySprite));
+
+            for(int i = 0; i < 2; i++)
+                EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, 1, _enemySprite));
         }
     }
 

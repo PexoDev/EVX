@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Controllers;
+using UnityEngine;
 
 namespace Assets.Scripts.Units
 {
@@ -48,21 +49,19 @@ namespace Assets.Scripts.Units
         }
 
         private bool _isReloading;
+        private float _reloadingTime = 0;
         protected void Attack(TTargetType target)
         {
-            if (_isReloading) return;
-            if (_bulletsCount <= 0)
+            if (_reloadingTime > 0)
             {
-                Task.Run(() =>
+                _reloadingTime -= Time.deltaTime;
+                if (_reloadingTime <= 0)
                 {
-                    _isReloading = true;
-                    if(_up.ReloadTime > 0)
-                        Thread.Sleep((int)(_up.ReloadTime * 1000));
                     _bulletsCount = _up.ClipSize;
-                    _isReloading = false;
-                });
+                }
                 return;
             }
+
             if (_up.AttacksPerSecond <= 0.01f) return;
             if (target == null) return;
             if (!CooldownController.GetCooldown(_cooldownKey, 1 / _up.AttacksPerSecond)) return;
@@ -73,6 +72,11 @@ namespace Assets.Scripts.Units
 
             void FinalHitAction()
             {
+                if (!(GameController.RandomGenerator.Next(0, 101) * 0.01f < _up.AttackAccuracy))
+                {
+                    Debug.Log("Miss");
+                    return;
+                };
                 target.GetHit(attack, this);
                 foreach (var action in OnHitEffects.ToArray())
                     action?.Invoke(this, target);
@@ -80,6 +84,10 @@ namespace Assets.Scripts.Units
 
             ProjectilesController.Instance.InitializeProjectile(attack, this, target, FinalHitAction);
             _bulletsCount--;
+            if (_bulletsCount <= 0)
+            {
+                _reloadingTime = _up.ReloadTime;
+            }
         }
 
 

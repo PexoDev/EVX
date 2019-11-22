@@ -18,11 +18,11 @@ namespace Assets.Scripts.Controllers
             return false;
         }
 
-        public static void UpdateCooldowns()
+        public static void UpdateCooldowns(int speedMultiplier)
         {
             foreach (string key in Cooldowns.Keys)
                 if(Cooldowns[key] > 0)
-                    Cooldowns[key] -= Time.deltaTime;
+                    Cooldowns[key] -= Time.deltaTime * speedMultiplier;
         }
     }
 }

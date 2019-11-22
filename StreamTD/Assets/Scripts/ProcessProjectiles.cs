@@ -13,16 +13,17 @@ namespace Assets.Scripts
         {
             if (GameController.Mode != GameMode.Play) return;
 
-            Entities.ForEach((ref ProjectileBody ent, ref Translation trans) =>
-            {
-                trans.Value = math.lerp(trans.Value, ent.Target, ent.Speed);
+            for(int i = 0; i< GameController.GameSpeed; i++)
+                Entities.ForEach((ref ProjectileBody ent, ref Translation trans) =>
+                {
+                    trans.Value = math.lerp(trans.Value, ent.Target, ent.Speed);
 
-                if (!(math.distance(trans.Value, ent.Target) < 0.1f)) return;
-                if (!ProjectilesController.HitActions.ContainsKey(ent.Id)) return;
+                    if (!(math.distance(trans.Value, ent.Target) < 0.1f)) return;
+                    if (!ProjectilesController.HitActions.ContainsKey(ent.Id)) return;
 
-                ProjectilesController.HitActions[ent.Id].Invoke();
-                ProjectilesController.HitActions.Remove(ent.Id);
-            });
+                    ProjectilesController.HitActions[ent.Id].Invoke();
+                    ProjectilesController.HitActions.Remove(ent.Id);
+                });
         }
     }
 }
