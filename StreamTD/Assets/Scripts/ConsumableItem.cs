@@ -6,14 +6,14 @@ using Assets.Scripts.Units.Soldier;
 
 namespace Assets.Scripts
 {
-    public class ConsumableItem
+    public abstract class ConsumableItem
     {
         public string Name { get; set; }
         public UnitParameters StatsChange { get; set; }
 
         public List<Action<Soldier, Enemy>> OnHitActions = new List<Action<Soldier, Enemy>>();
 
-        private readonly bool _multiplyStats;
+        protected readonly bool _multiplyStats;
 
         public ConsumableItem(UnitParameters statsChange, bool multiplyStats = false)
         {
@@ -21,15 +21,34 @@ namespace Assets.Scripts
             _multiplyStats = multiplyStats;
         }
 
-        public UnitParameters Apply(Unit unit)
+        public virtual void Apply(Unit unit)
         {
-            var up = unit.UP;
-            if (_multiplyStats)
-                up *= StatsChange;
-            else
-                up += StatsChange;
+            unit.UP = _multiplyStats ? unit.UP * StatsChange : unit.UP + StatsChange;
+        }
+    }
 
-            return up;
+    public class EquipmentItem : ConsumableItem
+    {
+        public EquipmentItem(UnitParameters statsChange, bool multiplyStats = false) : base(statsChange, multiplyStats)
+        {
+        }
+
+        public override void Apply(Unit unit)
+        {
+            unit.AddItem(this);
+        }
+
+        public UnitParameters Apply(UnitParameters up)
+        {
+            return _multiplyStats ? up * StatsChange : up + StatsChange;
+        }
+    }
+
+    public class Mutagen : ConsumableItem
+    {
+        public Mutagen(UnitParameters statsChange, bool multiplyStats = false) : base(statsChange, multiplyStats)
+        {
+
         }
     }
 }

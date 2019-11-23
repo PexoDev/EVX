@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Controllers;
 using UnityEngine;
@@ -74,7 +72,6 @@ namespace Assets.Scripts.Units
             {
                 if (!(GameController.RandomGenerator.Next(0, 101) * 0.01f < _up.AttackAccuracy))
                 {
-                    Debug.Log("Miss");
                     return;
                 };
                 target.GetHit(attack, this);

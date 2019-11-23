@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Controllers;
+﻿using System.Linq;
 using UnityEngine;
+using Assets.Scripts.Controllers;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Units.Enemy
 {

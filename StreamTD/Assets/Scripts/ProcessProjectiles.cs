@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Attacks;
+﻿using System.Numerics;
+using Assets.Scripts.Attacks;
 using Assets.Scripts.Controllers;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -16,7 +17,8 @@ namespace Assets.Scripts
             for(int i = 0; i< GameController.GameSpeed; i++)
                 Entities.ForEach((ref ProjectileBody ent, ref Translation trans) =>
                 {
-                    trans.Value = math.lerp(trans.Value, ent.Target, ent.Speed);
+                    var directionVector = math.normalizesafe((ent.Target - trans.Value));
+                    trans.Value += directionVector * ent.Speed;
 
                     if (!(math.distance(trans.Value, ent.Target) < 0.1f)) return;
                     if (!ProjectilesController.HitActions.ContainsKey(ent.Id)) return;

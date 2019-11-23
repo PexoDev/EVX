@@ -26,7 +26,17 @@ namespace Assets.Scripts
             }
         }
 
-        public static ConsumableItem RifleUpgrade = new ConsumableItem(
+        public static ConsumableItem Mutagen = new Mutagen(
+            new UnitParameters
+            {
+                Health = 20,
+                RegenerationPerSecond = 2
+            }, true)
+        {
+            Name = "Health Elixir"
+        };
+
+        public static ConsumableItem RifleUpgrade = new EquipmentItem(
             new UnitParameters
             {
                 DefaultDamage = 2,
@@ -37,7 +47,7 @@ namespace Assets.Scripts
                 Name = "Rifle Upgrade"
             };
 
-        public static ConsumableItem AmmoUpgrade = new ConsumableItem(
+        public static ConsumableItem AmmoUpgrade = new EquipmentItem(
             new UnitParameters
             {
                 ClipSize = 10,
@@ -47,7 +57,7 @@ namespace Assets.Scripts
             Name = "Better Ammo"
         };
 
-        public static ConsumableItem ImprovedArmor = new ConsumableItem(
+        public static ConsumableItem ImprovedArmor = new EquipmentItem(
             new UnitParameters
             {
                  Armor = 100,
@@ -57,7 +67,7 @@ namespace Assets.Scripts
             Name = "Improved Armor"
         };
 
-        public static ConsumableItem ExplosiveShells = new ConsumableItem(
+        public static ConsumableItem ExplosiveShells = new EquipmentItem(
             new UnitParameters
             {
                 AttacksPerSecond = 0.25f

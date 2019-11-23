@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Assets.Scripts.Attacks;
-using Assets.Scripts.Controllers;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
-using Boo.Lang;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Assets.Scripts
 {
@@ -19,11 +18,22 @@ namespace Assets.Scripts
         private InteractiveMapField _tile;
 
         private Vector2 _unitPosition;
-        public UnitParameters UP { get; private set; }
+        private UnitParameters _baseUP;
+        private UnitParameters _UPWithItems;
+        public UnitParameters UP
+        {
+            get => _UPWithItems;
+            set
+            {
+                _baseUP = value; 
+                RefreshUPWithItems();
+                foreach (Soldier s in Soldiers)
+                    s._up = _UPWithItems;
+            }
+        }
 
         public List<Action<Soldier,Enemy>> OnHitActions = new List<Action<Soldier, Enemy>>();
-
-        public Action<UnitParameters> ChangeParameters;
+        public List<ConsumableItem> _equipedItems = new List<ConsumableItem>();
 
         private const float _unitSplitDistance = 0.2f;
         private static Vector2[] _positionOffsets =
@@ -40,17 +50,8 @@ namespace Assets.Scripts
         {
             Tile = field;
             _unitPosition = Tile.Field.Position;
-            UP = UnitParameters.GetCopy(up);
-
-            ChangeParameters = parameters =>
-            {
-                UP = parameters;
-                UP.ValueChanged();
-                foreach (Soldier soldier in Soldiers)
-                {
-                    soldier._up = UP;
-                }
-            };
+            _baseUP = UnitParameters.GetCopy(up);
+            _UPWithItems = UnitParameters.GetCopy(up);
 
             ParseTypes(dt, ht);
 
@@ -96,6 +97,27 @@ namespace Assets.Scripts
                 case DamageType.Laser:
                     UP.LaserDamage = Soldier.DefaultDamage;
                     break;
+            }
+        }
+
+        public void AddItem(ConsumableItem item)
+        {
+            _equipedItems.Add(item);
+            RefreshUPWithItems();
+        }
+
+        public void RemoveItem(ConsumableItem item)
+        {
+            _equipedItems.Remove(item);
+            RefreshUPWithItems();
+        }
+
+        private void RefreshUPWithItems()
+        {
+            _UPWithItems = UnitParameters.GetCopy(_baseUP);
+            foreach (var equiped in _equipedItems)
+            {
+                _UPWithItems = ((EquipmentItem)equiped).Apply(_UPWithItems);
             }
         }
 

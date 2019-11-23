@@ -24,6 +24,7 @@ namespace Assets.Scripts.Controllers
 
         private static GameMode _mode = GameMode.Play;
 
+        [SerializeField] private LineRenderer _pathLineRenderer;
         [SerializeField] private EQCanvasController _eqCanvasController;
 
         [SerializeField] private GameObject _enemyPrefab;
@@ -43,7 +44,6 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Button _choiceMid;
         [SerializeField] private Button _choiceRight;
 
-
         [SerializeField] private Text _nameText;
         [SerializeField] private Text _describText;
         [SerializeField] private Button _hqSoldiersTilesButton;
@@ -59,6 +59,7 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Material _laserMaterial;
         [SerializeField] private Material _ballisticMaterial;
         [SerializeField] private Mesh _projectileMesh;
+
 
         public EnemiesController EnemiesController { get; set; }
         public SoldiersController SoldiersController { get; set; }
@@ -81,7 +82,7 @@ namespace Assets.Scripts.Controllers
             UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
             UIController.Instantiate();
 
-            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite);
+            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
 
             ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
 
@@ -108,6 +109,16 @@ namespace Assets.Scripts.Controllers
             if (Input.GetKeyDown(KeyCode.Alpha3)) GameSpeed = 4;
             if (Input.GetKeyDown(KeyCode.Alpha4)) GameSpeed = 8;
             if (Input.GetKeyDown(KeyCode.X)) _eqCanvasController.AddNewItem(ConsumableItemsList.AllConsumableItems[RandomGenerator.Next(0,ConsumableItemsList.AllConsumableItems.Length)], this);
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                foreach (var unit in SoldiersController.Units)
+                {
+                    foreach (var item in unit._equipedItems.ToArray())
+                    {
+                        unit.RemoveItem(item);
+                    }
+                }
+            }
 
             ProcessGameLoop();
         }
@@ -154,12 +165,12 @@ namespace Assets.Scripts.Controllers
             UnitParameters defaultEnemySettings;
             if (RandomGenerator.Next(0, 101) < 25)
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, LaserDamage = 1, AttackRange = 1, Health = 400, AttacksPerSecond = 0.5f, ClipSize = 10};
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, DefaultDamage = 0, AttackRange = 3, Health = 100, AttacksPerSecond = 0.5f, ClipSize = 10};
                 _enemySpawnCooldown = 1f;
             }
             else 
             {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, LaserDamage = 1, AttackRange = 1, Health = 40, AttacksPerSecond = 2f, ClipSize = 10 };
+                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, DefaultDamage = 0, AttackRange = 3, Health = 10, AttacksPerSecond = 2f, ClipSize = 10 };
                 _enemySpawnCooldown = 0.25f;
             }
 

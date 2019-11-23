@@ -71,7 +71,7 @@ namespace Assets.Scripts.Units
                 property.SetValue(copy,property.GetValue(up));
             return copy;
         }
-
+       
         public static UnitParameters operator * (UnitParameters up, float factor)
         {
             foreach (PropertyInfo property in typeof(UnitParameters).GetProperties())
@@ -79,7 +79,7 @@ namespace Assets.Scripts.Units
                 if (property.PropertyType == typeof(int))
                 {
                     var value = (int)property.GetValue(up);
-                    property.SetValue(up, (int)(value * factor));
+                    property.SetValue(up, (int)(value *factor));
                 }
 
                 if (property.PropertyType == typeof(float))
@@ -92,6 +92,11 @@ namespace Assets.Scripts.Units
             return up;
         }
 
+        //!###! WARNING !###!
+        //Floats are multiplied by their values
+        //Ints are turned into percents and then multiplied
+        //This means that if you have a multiplication by 2, all floats are doubled but ints are increased by 2% only.
+        //I'm already sorry for all future generations trying to figure this part out.
         public static UnitParameters operator *(UnitParameters a, UnitParameters b)
         {
             foreach (PropertyInfo property in typeof(UnitParameters).GetProperties())
@@ -102,7 +107,8 @@ namespace Assets.Scripts.Units
                     var valueB = (int)property.GetValue(b);
                     if(valueB == 0) continue;
 
-                    property.SetValue(a, valueA * valueB);
+                    //Here's the hack...
+                    property.SetValue(a, (int)(valueA * (1 + valueB/100f)));
                 }
 
                 if (property.PropertyType == typeof(float))

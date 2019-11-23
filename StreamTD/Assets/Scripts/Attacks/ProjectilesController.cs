@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Controllers;
 using Assets.Scripts.Units;
 using Unity.Entities;
-using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 namespace Assets.Scripts.Attacks

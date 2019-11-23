@@ -34,10 +34,11 @@ namespace Assets.Scripts
         {
             var newButtonObject = Instantiate(_buttonPrefab, _parent);
             var newButton = newButtonObject.GetComponent<Button>();
+            newButton.GetComponentInChildren<Text>().text = item.Name;
 
             newButton.onClick.AddListener(() =>
             {
-                gc.UIController.UpgradeManager.CurrentUnit.ChangeParameters.Invoke(item.Apply(gc.UIController.UpgradeManager.CurrentUnit));
+                item.Apply(gc.UIController.UpgradeManager.CurrentUnit);
 
                 _allButtonsObjects.Remove(newButtonObject);
                 _allButtons.Remove(newButton);

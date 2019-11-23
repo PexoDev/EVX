@@ -21,12 +21,12 @@ namespace Assets.Scripts
         private readonly (int x, int y) _mapSize = (18, 18);
         private float _gridDistance = 1f;
 
-        public MapGrid(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite)
+        public MapGrid(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite, LineRenderer lr)
         {
             GenerateEmptyMap(ref Map);
             RandomizeTerrainBlocks(ref Map, 30);
             RandomizePath(ref Map);
-            Instantiate(fieldPrefab, parent, gc, mapFieldSprite);
+            Instantiate(fieldPrefab, parent, gc, mapFieldSprite, lr);
         }
 
         private void GenerateEmptyMap(ref InteractiveMapField[][] map)
@@ -109,7 +109,7 @@ namespace Assets.Scripts
             Path[Path.Length - 1].Type = MapFieldType.Base;
         }
 
-        private void Instantiate(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite)
+        private void Instantiate(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite, LineRenderer lr)
         {
             var offsetValue = -Map.Length * 0.4725f;
             var offset = new Vector3(offsetValue, offsetValue, 0);
@@ -119,6 +119,10 @@ namespace Assets.Scripts
                 GenerateGameObjectsForMapFields(i, j, fieldPrefab, parent, offset, mapFieldSprite);
                 AddListeners(gc, i, j);
             }
+
+            lr.positionCount = Path.Length;
+            var lrPositions = Path.Select(field => new Vector3(field.Position.x, field.Position.y)).ToArray();
+            lr.SetPositions(lrPositions);
 
             Render();
         }
@@ -151,6 +155,7 @@ namespace Assets.Scripts
 
         private void RenderTile(int x, int y)
         {
+            if (Map[x][y].Field.Type == MapFieldType.Path) Map[x][y].SpriteRenderer.enabled = false;
             Map[x][y].SpriteRenderer.color = MapField.FieldColors[Map[x][y].Field.Type];
         }
 

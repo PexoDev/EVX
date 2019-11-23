@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Attacks;
+﻿using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Units.Enemy;
 using UnityEngine;
@@ -12,6 +9,8 @@ namespace Assets.Scripts.Units.Soldier
     {
         private EnemiesController _ec;
         private Sprite[] _soldierSprites;
+        public List<Unit> Units { get; set; } = new List<Unit>();
+
         public SoldiersController(GameController gc, EnemiesController ec, Sprite[] soldierSprites) : base(gc)
         {
             _ec = ec;
@@ -21,6 +20,7 @@ namespace Assets.Scripts.Units.Soldier
         public bool SpawnSoldier(InteractiveMapField field)
         {
             var unit = new Unit(_ec, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
+            Units.Add(unit);
 
             Entities.AddRange(unit.Soldiers);
             field.ClickableObject.OnClickActions.Push(() =>
