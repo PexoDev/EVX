@@ -120,9 +120,11 @@ namespace Assets.Scripts
                 AddListeners(gc, i, j);
             }
 
-            lr.positionCount = Path.Length;
-            var lrPositions = Path.Select(field => new Vector3(field.Position.x, field.Position.y)).ToArray();
-            lr.SetPositions(lrPositions);
+            lr.positionCount = Path.Length + 1;
+            List<Vector3> lrPostions = new List<Vector3>();
+            lrPostions.Add(Path.First().Position + Vector2.down*.25f);
+            lrPostions.AddRange(Path.Select(field => new Vector3(field.Position.x, field.Position.y)));
+            lr.SetPositions(lrPostions.ToArray());
 
             Render();
         }
@@ -155,7 +157,6 @@ namespace Assets.Scripts
 
         private void RenderTile(int x, int y)
         {
-            if (Map[x][y].Field.Type == MapFieldType.Path) Map[x][y].SpriteRenderer.enabled = false;
             Map[x][y].SpriteRenderer.color = MapField.FieldColors[Map[x][y].Field.Type];
         }
 

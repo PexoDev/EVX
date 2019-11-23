@@ -15,7 +15,8 @@ namespace Assets.Scripts
         {
             {MapFieldType.Empty, Color.white},
             {MapFieldType.Soldier, Color.red},
-            {MapFieldType.Path, Color.blue},
+            //{MapFieldType.Path, Color.blue},
+            {MapFieldType.Path, Color.white},
             {MapFieldType.Terrain, Color.green},
             {MapFieldType.Base, Color.magenta},
             {MapFieldType.Blocked, Color.cyan}
