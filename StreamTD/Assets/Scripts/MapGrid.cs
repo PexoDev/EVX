@@ -18,11 +18,12 @@ namespace Assets.Scripts
         public readonly InteractiveMapField[][] Map;
         public MapField[] Path;
 
-        private readonly (int x, int y) _mapSize = (18, 18);
+        private readonly (int x, int y) _mapSize;
         private float _gridDistance = 1f;
 
-        public MapGrid(GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite, LineRenderer lr)
+        public MapGrid((int x, int y) mapSize, GameObject fieldPrefab, Transform parent, GameController gc, Sprite mapFieldSprite, LineRenderer lr)
         {
+            _mapSize = mapSize;
             GenerateEmptyMap(ref Map);
             RandomizeTerrainBlocks(ref Map, 30);
             RandomizePath(ref Map);

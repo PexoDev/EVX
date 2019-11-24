@@ -25,9 +25,10 @@ namespace Assets.Scripts
 
         public void UpdateCanvas()
         {
-            var originPoint = new Vector3(0, _parentCanvas.pixelRect.height/2 - 100);
+            _parent.sizeDelta = new Vector2(_parent.sizeDelta.x,120 * _allButtons.Count);
+
             for (var i = 0; i < _allButtonsObjects.Count; i++)
-                _allButtonsObjects[i].transform.localPosition = originPoint + Vector3.down * 100 * i;
+                _allButtonsObjects[i].transform.position = _parent.position + Vector3.up*100 + Vector3.down * 120 * i;
         }
 
         public void AddNewItem(ConsumableItem item, GameController gc)
@@ -38,6 +39,8 @@ namespace Assets.Scripts
 
             newButton.onClick.AddListener(() =>
             {
+                if(gc.UIController.UpgradeManager.CurrentUnit == null) return;
+
                 item.Apply(gc.UIController.UpgradeManager.CurrentUnit);
 
                 _allButtonsObjects.Remove(newButtonObject);

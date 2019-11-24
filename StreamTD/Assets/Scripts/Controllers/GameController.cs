@@ -47,9 +47,8 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Text _nameText;
         [SerializeField] private Text _describText;
         [SerializeField] private Button _hqSoldiersTilesButton;
-        [SerializeField] private SpriteRenderer[] _levelPoints;
-        [SerializeField] private Slider _expSlider;
 
+        [SerializeField] private Vector2 _mapSize;
         [SerializeField] private Sprite _mapFieldSprite;
 
         [SerializeField] private Sprite[] _soldierSprites;
@@ -79,10 +78,10 @@ namespace Assets.Scripts.Controllers
         {
             EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _enemySprite, _enemySprite, _enemySprite);
             SoldiersController = new SoldiersController(this, EnemiesController, _soldierSprites);
-            UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText, _levelPoints, _expSlider);
+            UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText);
             UIController.Instantiate();
 
-            Map = new MapGrid(_mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
+            Map = new MapGrid(((int)_mapSize.x, (int)_mapSize.y), _mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
 
             ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
 

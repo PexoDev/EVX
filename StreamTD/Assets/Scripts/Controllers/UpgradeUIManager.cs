@@ -16,18 +16,14 @@ namespace Assets.Scripts.Controllers
         private readonly Button _choiceMid;
         private readonly Button _choiceRight;
 
-        private readonly Slider _experienceSlider;
-        private readonly SpriteRenderer[] _levelPoints;
         private readonly Text _nameText;
         private readonly Text _describText;
 
-        public UpgradeUIManager(Canvas choiceMenu,Button choiceLeft, Button choiceMid, Button choiceRight, Text nameText, Text describText, SpriteRenderer[] levelPoints, Slider expSlider)
+        public UpgradeUIManager(Canvas choiceMenu,Button choiceLeft, Button choiceMid, Button choiceRight, Text nameText, Text describText)
         {
             _choiceMenuCanvas = choiceMenu;
             _nameText = nameText;
             _describText = describText;
-            _levelPoints = levelPoints;
-            _experienceSlider = expSlider;
         }
 
         public Unit CurrentUnit

@@ -23,8 +23,7 @@ namespace Assets.Scripts.Controllers
         public UpgradeUIManager UpgradeManager;
 
         public UIController(GameController gc, Canvas choiceMenu, Text choiceText, Button choiceLeft,
-            Button choiceMid, Button choiceRight, Button hqSoldiersTile, Text nameText, Text describText, SpriteRenderer[] levelPoints,
-            Slider expSlider)
+            Button choiceMid, Button choiceRight, Button hqSoldiersTile, Text nameText, Text describText)
         {
             _gc = gc;
             _choiceMenu = choiceMenu;
@@ -40,8 +39,7 @@ namespace Assets.Scripts.Controllers
             _choiceRightText = choiceRight.GetComponentInChildren<Text>();
 
             HQUIManager = new HQUIManager(hqSoldiersTile);
-            UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText, levelPoints,
-                expSlider);
+            UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText);
         }
 
         public void Instantiate()
