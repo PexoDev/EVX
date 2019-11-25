@@ -7,19 +7,21 @@ namespace Assets.Scripts.Units.Soldier
 {
     public class SoldiersController: EntitiesController<Soldier>
     {
-        private EnemiesController _ec;
+        private EnemiesController _enemiesController;
+        private EconomyController _ecoController;
         private Sprite[] _soldierSprites;
         public List<Unit> Units { get; set; } = new List<Unit>();
 
-        public SoldiersController(GameController gc, EnemiesController ec, Sprite[] soldierSprites) : base(gc)
+        public SoldiersController(GameController gc, EnemiesController enemiesController, Sprite[] soldierSprites) : base(gc)
         {
-            _ec = ec;
+            _ecoController = gc.EconomyController;
+            _enemiesController = enemiesController;
             _soldierSprites = soldierSprites;
         }
 
         public bool SpawnSoldier(InteractiveMapField field)
         {
-            var unit = new Unit(_ec, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
+            var unit = new Unit(_enemiesController, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
             Units.Add(unit);
 
             Entities.AddRange(unit.Soldiers);

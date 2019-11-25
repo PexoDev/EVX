@@ -10,14 +10,17 @@ namespace Assets.Scripts.Controllers
 {
     public class HQUIManager
     {
+        public const int UnitPrice = 300;
         private GameObject _backgroundPrefab;
+        private EconomyController _ecoController;
         private readonly Button _hqNewSoldierTilesButton;
 
         public static DamageType SelectedDamageType;
         public static HealthType SelectedHealthType;
 
-        public HQUIManager(Button hqNewSoldierTilesButton)
+        public HQUIManager(Button hqNewSoldierTilesButton, EconomyController ecoContr)
         {
+            _ecoController = ecoContr;
             _hqNewSoldierTilesButton = hqNewSoldierTilesButton;
         }
 
@@ -25,6 +28,11 @@ namespace Assets.Scripts.Controllers
         { 
             _hqNewSoldierTilesButton.onClick.AddListener(async () =>
             {
+                if (!_ecoController.TryBuy(UnitPrice))
+                {
+                    Debug.Log("Too little quants! Try earning more.");
+                    return;
+                }
                 GameController.Mode = GameMode.Building;
 
                await setButtonsBehaviour("Choose a weapon type for this soldier.","Laser Weapon", "Plasma Weapon", "Ballistic Weapon",

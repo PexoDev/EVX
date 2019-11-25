@@ -144,6 +144,7 @@ namespace Assets.Scripts
             Map[i][j].GameObject.transform.localPosition = position;
             Map[i][j].SpriteRenderer.sprite = mapFieldSprite;
             Map[i][j].SpriteRenderer.sortingOrder = -30;
+            Map[i][j].SpriteRenderer.sortingLayerName = "Map";
         }
 
         private void AddListeners(GameController gc, int i, int j)

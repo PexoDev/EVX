@@ -18,14 +18,14 @@ namespace Assets.Scripts
         private InteractiveMapField _tile;
 
         private Vector2 _unitPosition;
-        private UnitParameters _baseUP;
+        public UnitParameters BaseUP { get; private set; }
         private UnitParameters _UPWithItems;
         public UnitParameters UP
         {
             get => _UPWithItems;
             set
             {
-                _baseUP = value; 
+                BaseUP = value; 
                 RefreshUPWithItems();
                 foreach (Soldier s in Soldiers)
                     s._up = _UPWithItems;
@@ -50,7 +50,7 @@ namespace Assets.Scripts
         {
             Tile = field;
             _unitPosition = Tile.Field.Position;
-            _baseUP = UnitParameters.GetCopy(up);
+            BaseUP = UnitParameters.GetCopy(up);
             _UPWithItems = UnitParameters.GetCopy(up);
 
             ParseTypes(dt, ht);
@@ -114,7 +114,7 @@ namespace Assets.Scripts
 
         private void RefreshUPWithItems()
         {
-            _UPWithItems = UnitParameters.GetCopy(_baseUP);
+            _UPWithItems = UnitParameters.GetCopy(BaseUP);
             foreach (var equiped in _equipedItems)
             {
                 _UPWithItems = ((EquipmentItem)equiped).Apply(_UPWithItems);

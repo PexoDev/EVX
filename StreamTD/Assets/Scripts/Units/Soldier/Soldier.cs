@@ -2,18 +2,19 @@
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Units.Enemy;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.Scripts.Units.Soldier
 {
     public class Soldier: AttackingEntity<Soldier, Enemy.Enemy>
     {
         public GameObject Body;
-        public static int DefaultDamage = 8;
+        public static int DefaultDamage = 5;
         public static UnitParameters DefaultParams = new UnitParameters
         {
             AttacksPerSecond = 2f,
-            Health = 100,
-            AttackRange = 3,
+            Health = 200,
+            AttackRange = 4,
             ClipSize = 20,
             AttackAccuracy = 0.9f,
             CriticalChance = 0.05f,
@@ -47,6 +48,7 @@ namespace Assets.Scripts.Units.Soldier
         {
             base.Die();
             Controller.RemoveInstance(this);
+            Object.Destroy(Body);
         }
 
         public override void AnimateHurt()

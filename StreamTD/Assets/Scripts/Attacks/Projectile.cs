@@ -53,7 +53,7 @@ namespace Assets.Scripts.Attacks
             {
                 mesh = meshTexture,
                 material = mat,
-                layer = 10
+                layer = 30
             });
         }
     }

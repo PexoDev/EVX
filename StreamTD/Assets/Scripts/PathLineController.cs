@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Controllers;
 using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
@@ -27,6 +28,7 @@ public class PathLineController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.Mode != GameMode.Play) return;
         var currentOffset = _rend.material.GetTextureOffset("_MainTex");
         _rend.material.SetTextureOffset("_MainTex", currentOffset + Vector2.left * Time.deltaTime);
     }
@@ -39,6 +41,12 @@ public class PathLineController : MonoBehaviour
             var currentColor = _rend.material.GetColor("_EmissionColor");
             for (int i = 0; i < 1000; i++)
             {
+                if (GameController.Mode != GameMode.Play)
+                {
+                    i--;
+                    yield return new WaitForEndOfFrame();
+                    continue;
+                }
                 _rend.material.SetColor("_EmissionColor", Color.Lerp(currentColor, _colors[_currentColorIndex], i*0.001f));
                 yield return new WaitForEndOfFrame();
             }

@@ -6,6 +6,7 @@ using Assets.Scripts.Attacks;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,6 +22,7 @@ namespace Assets.Scripts.Controllers
         public ProjectilesController ProjectilesController { get; private set; }
         public PlayerBase PlayerBase { get; private set; }
         public ScoreController ScoreController { get; private set; } = new ScoreController();
+        public EconomyController EconomyController { get; set; } 
 
         private static GameMode _mode = GameMode.Play;
 
@@ -39,6 +41,7 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Canvas _mainCanvas;
         [SerializeField] private Canvas _choiceModalCanvas;
         [SerializeField] private Text _choiceText;
+        [SerializeField] private Text _quantsText;
 
         [SerializeField] private Button _choiceLeft;
         [SerializeField] private Button _choiceMid;
@@ -52,7 +55,7 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Sprite _mapFieldSprite;
 
         [SerializeField] private Sprite[] _soldierSprites;
-        [SerializeField] private Sprite _enemySprite;
+        [SerializeField] private Sprite[] _enemySprites;
 
         [SerializeField] private Material _plasMaterial;
         [SerializeField] private Material _laserMaterial;
@@ -76,15 +79,14 @@ namespace Assets.Scripts.Controllers
 
         private void Start()
         {
-            EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _enemySprite, _enemySprite, _enemySprite);
-            SoldiersController = new SoldiersController(this, EnemiesController, _soldierSprites);
+            Map = new MapGrid(((int)_mapSize.x, (int)_mapSize.y), _mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
+            ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
+            EconomyController = new EconomyController(_quantsText);
             UIController = new UIController(this, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _hqSoldiersTilesButton, _nameText, _describText);
             UIController.Instantiate();
 
-            Map = new MapGrid(((int)_mapSize.x, (int)_mapSize.y), _mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
-
-            ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
-
+            EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _enemySprites[0], _enemySprites[1], _enemySprites[2]);
+            SoldiersController = new SoldiersController(this, EnemiesController, _soldierSprites);
             EnemiesController.ParentCanvas = _mainCanvas;
         }
 
@@ -140,9 +142,10 @@ namespace Assets.Scripts.Controllers
             UIController.UpgradeManager.Render();
         }
 
-        private float _enemySpawnCooldown = 3f;
+        private float _enemySpawnCooldown = 0.45f;
         private float _currentEnemySpawnCooldown;
-
+        [SerializeField]private float _powerLevel = 1;
+        [SerializeField] private int _enemiesSpawned = 0;
         private void GenerateWave()
         {
 
@@ -152,32 +155,43 @@ namespace Assets.Scripts.Controllers
                 return;
             }
 
-            SpawnEnemy();
+            EnemiesController.SpawnEnemy(_powerLevel);
+            _powerLevel = 1 + ((float)math.pow(_enemiesSpawned,1.1) / 300 + math.cos(_enemiesSpawned*0.1f)*0.2f) * 0.25f;
+            _enemiesSpawned++;
+            if (_spawnTwo)
+            {
+                EnemiesController.SpawnEnemy(_powerLevel);
+                _powerLevel = 1 + ((float)math.pow(_enemiesSpawned, 1.1) / 300 + math.cos(_enemiesSpawned * 0.1f) * 0.2f) * 0.25f;
+                _enemiesSpawned++;
+            }
+            _spawnTwo = !_spawnTwo;
+
             _currentEnemySpawnCooldown = _enemySpawnCooldown;
         }
 
-        private float _difficulty = 0.001f;
-        private void SpawnEnemy()
-        {
-            _difficulty += 0.005f;
+        private bool _spawnTwo;
+        //private float _difficulty = 0.001f;
+        //private void SpawnEnemy()
+        //{
+        //    _difficulty += 0.005f;
 
-            UnitParameters defaultEnemySettings;
-            if (RandomGenerator.Next(0, 101) < 25)
-            {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, DefaultDamage = 0, AttackRange = 3, Health = 100, AttacksPerSecond = 0.5f, ClipSize = 10};
-                _enemySpawnCooldown = 1f;
-            }
-            else 
-            {
-                defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, DefaultDamage = 0, AttackRange = 3, Health = 10, AttacksPerSecond = 2f, ClipSize = 10 };
-                _enemySpawnCooldown = 0.25f;
-            }
+        //    UnitParameters defaultEnemySettings;
+        //    if (RandomGenerator.Next(0, 101) < 25)
+        //    {
+        //        defaultEnemySettings = new UnitParameters { MovementSpeed = 0.0012f, DefaultDamage = 0, AttackRange = 3, Health = 100, AttacksPerSecond = 0.5f, ClipSize = 10};
+        //        _enemySpawnCooldown = 1f;
+        //    }
+        //    else 
+        //    {
+        //        defaultEnemySettings = new UnitParameters { MovementSpeed = 0.010f, DefaultDamage = 0, AttackRange = 3, Health = 10, AttacksPerSecond = 2f, ClipSize = 10 };
+        //        _enemySpawnCooldown = 0.25f;
+        //    }
 
-            defaultEnemySettings *= 1 + _difficulty;
+        //    defaultEnemySettings *= 1 + _difficulty;
 
-            for(int i = 0; i < 2; i++)
-                EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, 1, _enemySprite));
-        }
+        //    for(int i = 0; i < 2; i++)
+        //        EnemiesController.SpawnEnemy(new DummyEnemy(Map.Path.ToArray(), SoldiersController, EnemiesController, PlayerBase, (DamageType)RandomGenerator.Next(1,4), (HealthType)RandomGenerator.Next(1, 4), defaultEnemySettings, 1, _enemySprite));
+        //}
     }
 
     public enum GameMode

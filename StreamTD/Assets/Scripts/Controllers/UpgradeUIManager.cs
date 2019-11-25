@@ -43,7 +43,7 @@ namespace Assets.Scripts.Controllers
         {
             if(CurrentUnit == null) return;
 
-            _nameText.text = CurrentUnit.Soldiers.Select(sold => sold.Name).Aggregate((s1, s2) => $"{s1}\n{s2}");
+            _nameText.text = CurrentUnit.Soldiers.Select(sold => sold.Name + " [" + sold.HP+"]").Aggregate((s1, s2) => $"{s1}\n{s2}");
 
             _describText.text = "";
             foreach (PropertyInfo property in typeof(UnitParameters).GetProperties())

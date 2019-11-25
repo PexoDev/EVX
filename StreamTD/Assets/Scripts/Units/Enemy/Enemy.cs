@@ -7,7 +7,8 @@ namespace Assets.Scripts.Units.Enemy
 {
     public abstract class Enemy: AttackingEntity<Enemy, Soldier.Soldier>
     {
-        public int ScoreValue { get;} = 150;
+        public EnemyType Type;
+        public int ScoreValue { get; set; } = 1;
         protected bool BaseInRange;
         public MapField[] PathToTraverse { get; set; }
         private PlayerBase _targetBase;
@@ -15,7 +16,7 @@ namespace Assets.Scripts.Units.Enemy
         public bool Frozen { get; set; }
         private UnitParameters _up;
 
-        protected Enemy(MapField[] path, SoldiersController sc, EnemiesController ec, PlayerBase targetBase, DamageType dt, HealthType ht, UnitParameters up, int defaultDamage, Sprite sprite) : base(sc, ec, up)
+        protected Enemy(MapField[] path, SoldiersController sc, EnemiesController ec, PlayerBase targetBase, DamageType dt, HealthType ht, UnitParameters up, int defaultDamage) : base(sc, ec, up)
         {
             PathToTraverse = path;
             _targetBase = targetBase;
@@ -40,7 +41,7 @@ namespace Assets.Scripts.Units.Enemy
                     _up.PlasmaDamage = defaultDamage * 2;
                     break;
                 case DamageType.Ballistic:
-                    _up.BallisticDamage = defaultDamage / 2;
+                    _up.BallisticDamage = Mathf.CeilToInt(defaultDamage / 2);
                     break;
                 case DamageType.Laser:
                     _up.LaserDamage = defaultDamage;
@@ -96,6 +97,7 @@ namespace Assets.Scripts.Units.Enemy
         public override void Die()
         {
             base.Die();
+            Controller.Gc.EconomyController.Quants += ScoreValue;
             Controller.RemoveInstance(this);
         }
     }

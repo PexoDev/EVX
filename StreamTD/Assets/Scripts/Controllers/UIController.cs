@@ -38,7 +38,7 @@ namespace Assets.Scripts.Controllers
             _choiceRight = choiceRight;
             _choiceRightText = choiceRight.GetComponentInChildren<Text>();
 
-            HQUIManager = new HQUIManager(hqSoldiersTile);
+            HQUIManager = new HQUIManager(hqSoldiersTile, gc.EconomyController);
             UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText);
         }
 
