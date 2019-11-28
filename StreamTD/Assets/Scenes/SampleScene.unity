@@ -867,7 +867,9 @@ MonoBehaviour:
   _choiceRight: {fileID: 597679262}
   _nameText: {fileID: 590870138}
   _describText: {fileID: 1680742132}
-  _hqSoldiersTilesButton: {fileID: 914972420}
+  _buyNewUnitButton: {fileID: 914972420}
+  _sellUnitButton: {fileID: 130431697}
+  _buyRandomItemButton: {fileID: 2118083362}
   _mapSize: {x: 15, y: 15}
   _mapFieldSprite: {fileID: 21300000, guid: 99475ae0b5c3b0043b7e5f8fca5cdfe9, type: 3}
   _soldierSprites:
@@ -2761,7 +2763,7 @@ PrefabInstance:
     - target: {fileID: 6957044947771750377, guid: 37048385cb9735d4492fb83f2e8c5d22,
         type: 3}
       propertyPath: m_Name
-      value: BuyUnitButton (2)
+      value: BuyRandomItemButton
       objectReference: {fileID: 0}
     - target: {fileID: 6957044947771750376, guid: 37048385cb9735d4492fb83f2e8c5d22,
         type: 3}
@@ -2896,9 +2898,27 @@ PrefabInstance:
     - target: {fileID: 6957044947374347066, guid: 37048385cb9735d4492fb83f2e8c5d22,
         type: 3}
       propertyPath: m_Text
-      value: 'NEW
-
-        SOLDIER'
+      value: "BUY \nRAND. ITEM\n[300q]"
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957044947374347066, guid: 37048385cb9735d4492fb83f2e8c5d22,
+        type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957044947374347066, guid: 37048385cb9735d4492fb83f2e8c5d22,
+        type: 3}
+      propertyPath: m_FontData.m_AlignByGeometry
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957044947374347066, guid: 37048385cb9735d4492fb83f2e8c5d22,
+        type: 3}
+      propertyPath: m_FontData.m_RichText
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957044947374347066, guid: 37048385cb9735d4492fb83f2e8c5d22,
+        type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 33
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37048385cb9735d4492fb83f2e8c5d22, type: 3}

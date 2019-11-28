@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Assets.Scripts.Controllers;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -11,6 +9,7 @@ namespace Assets.Scripts
     public class EQCanvasController : MonoBehaviour
     {
         [SerializeField] private GameObject _buttonPrefab;
+        public const int RandomItemCost = 300;
 
         private RectTransform _parent;
         private Canvas _parentCanvas;
@@ -31,7 +30,7 @@ namespace Assets.Scripts
                 _allButtonsObjects[i].transform.position = _parent.position + Vector3.up*100 + Vector3.down * 120 * i;
         }
 
-        public void AddNewItem(ConsumableItem item, GameController gc)
+        public void AddNewItem(Item item, GameController gc)
         {
             var newButtonObject = Instantiate(_buttonPrefab, _parent);
             var newButton = newButtonObject.GetComponent<Button>();

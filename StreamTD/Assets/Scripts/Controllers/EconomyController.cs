@@ -9,7 +9,7 @@ namespace Assets.Scripts.Controllers
 
         private readonly Text _quantText;
 
-        private int _quants = 600;
+        private int _quants = 6000;
         public int Quants
         {
             get => _quants;
@@ -30,6 +30,7 @@ namespace Assets.Scripts.Controllers
         public EconomyController(Text quantText)
         {
             _quantText = quantText;
+            _quantText.text = $"{_quants}{QuantChar}";
         }
     }
 }

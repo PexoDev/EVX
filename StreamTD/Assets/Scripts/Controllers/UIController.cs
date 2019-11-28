@@ -18,12 +18,14 @@ namespace Assets.Scripts.Controllers
         private readonly Text _choiceText;
         private readonly GameController _gc;
 
-        public readonly HQUIManager HQUIManager;
+        public HQUIManager HQUIManager { get; private set; }
         private GameObject _panelPrefab;
-        public UpgradeUIManager UpgradeManager;
+        public UpgradeUIManager UpgradeManager { get; set; }
+        public EQCanvasController EQCanvasController { get; set; }
 
-        public UIController(GameController gc, Canvas choiceMenu, Text choiceText, Button choiceLeft,
-            Button choiceMid, Button choiceRight, Button hqSoldiersTile, Text nameText, Text describText)
+        public UIController(GameController gc, EQCanvasController eqCanvas, Canvas choiceMenu, Text choiceText, Button choiceLeft,
+            Button choiceMid, Button choiceRight, Button recruitNewUnitButton, Button sellUnitButton, 
+            Button buyRandomItemButton, Text nameText, Text describText)
         {
             _gc = gc;
             _choiceMenu = choiceMenu;
@@ -38,8 +40,16 @@ namespace Assets.Scripts.Controllers
             _choiceRight = choiceRight;
             _choiceRightText = choiceRight.GetComponentInChildren<Text>();
 
-            HQUIManager = new HQUIManager(hqSoldiersTile, gc.EconomyController);
             UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText);
+            HQUIManager = new HQUIManager(recruitNewUnitButton, sellUnitButton, gc.EconomyController, UpgradeManager);
+            EQCanvasController = eqCanvas;
+
+            buyRandomItemButton.onClick.AddListener(() =>
+            {
+                if (!gc.EconomyController.TryBuy(EQCanvasController.RandomItemCost)) return;
+
+                eqCanvas.AddNewItem(ConsumableItemsList.AllConsumableItems[GameController.RandomGenerator.Next(0,ConsumableItemsList.AllConsumableItems.Length)], gc);
+            });
         }
 
         public void Instantiate()

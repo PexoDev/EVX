@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using Assets.Scripts.Attacks;
+using Assets.Scripts.Controllers;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class Unit : LivingEntity
+    public class Unit : Entity
     {
         public const int UnitSize = 4;
 
@@ -33,7 +34,7 @@ namespace Assets.Scripts
         }
 
         public List<Action<Soldier,Enemy>> OnHitActions = new List<Action<Soldier, Enemy>>();
-        public List<ConsumableItem> _equipedItems = new List<ConsumableItem>();
+        public List<Item> _equipedItems = new List<Item>();
 
         private const float _unitSplitDistance = 0.2f;
         private static Vector2[] _positionOffsets =
@@ -45,9 +46,12 @@ namespace Assets.Scripts
             new Vector2(0,0),
         };
 
-        public Unit(EnemiesController ec, SoldiersController sc, InteractiveMapField field,
-            UnitParameters up, DamageType dt, HealthType ht, Sprite soldiersSprite) : base(up)
+        private GameController _gc;
+
+        public Unit(GameController gc, EnemiesController ec, SoldiersController sc, InteractiveMapField field,
+            UnitParameters up, DamageType dt, HealthType ht, Sprite soldiersSprite)
         {
+            _gc = gc;
             Tile = field;
             _unitPosition = Tile.Field.Position;
             BaseUP = UnitParameters.GetCopy(up);
@@ -100,13 +104,13 @@ namespace Assets.Scripts
             }
         }
 
-        public void AddItem(ConsumableItem item)
+        public void AddItem(Item item)
         {
             _equipedItems.Add(item);
             RefreshUPWithItems();
         }
 
-        public void RemoveItem(ConsumableItem item)
+        public void RemoveItem(Item item)
         {
             _equipedItems.Remove(item);
             RefreshUPWithItems();
@@ -132,8 +136,22 @@ namespace Assets.Scripts
             }
         }
 
-        public override void AnimateHurt()
+        public void RemoveUnit()
         {
+            foreach (Soldier soldier in Soldiers)
+            {
+                soldier.Die();
+            }
+
+            foreach (Item item in _equipedItems)
+            {
+                _gc.UIController.EQCanvasController.AddNewItem(item, _gc);
+            }
+
+            _tile.Field.Type = MapFieldType.Empty;
+            _tile.ClickableObject.OnClickActions.Pop();
+
+            _gc.EconomyController.Quants += HQUIManager.UnitPrice / 2;
         }
     }
 }

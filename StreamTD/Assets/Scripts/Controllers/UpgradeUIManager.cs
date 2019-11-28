@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Soldier;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,7 +34,6 @@ namespace Assets.Scripts.Controllers
             {
                 _choiceMenuCanvas.enabled = true;
 
-
                 _currentUnit = value;
                 Render();
             }
@@ -41,7 +41,12 @@ namespace Assets.Scripts.Controllers
 
         public void Render()
         {
-            if(CurrentUnit == null) return;
+            if (CurrentUnit == null)
+            {
+                _nameText.text = "";
+                _describText.text = "";
+                return;
+            }
 
             _nameText.text = CurrentUnit.Soldiers.Select(sold => sold.Name + " [" + sold.HP+"]").Aggregate((s1, s2) => $"{s1}\n{s2}");
 

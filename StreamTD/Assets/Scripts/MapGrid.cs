@@ -152,6 +152,7 @@ namespace Assets.Scripts
             Map[i][j].Field.OnTypeChanged += () => RenderTile(i, j);
             Map[i][j].ClickableObject.OnClickActions.Push(() =>
             {
+                gc.UIController.UpgradeManager.CurrentUnit = null;
                 Map[i][j].Field.PlaceSoldier(gc.SoldiersController, Map[i][j]);
                 Render();
             });

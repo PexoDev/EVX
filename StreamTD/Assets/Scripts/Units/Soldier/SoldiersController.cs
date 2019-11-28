@@ -21,7 +21,7 @@ namespace Assets.Scripts.Units.Soldier
 
         public bool SpawnSoldier(InteractiveMapField field)
         {
-            var unit = new Unit(_enemiesController, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
+            var unit = new Unit(Gc, _enemiesController, this, field, Soldier.DefaultParams, HQUIManager.SelectedDamageType, HQUIManager.SelectedHealthType, _soldierSprites[GameController.RandomGenerator.Next(0,_soldierSprites.Length)]);
             Units.Add(unit);
 
             Entities.AddRange(unit.Soldiers);

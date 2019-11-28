@@ -8,6 +8,6 @@ namespace Assets.Scripts.Controllers
 {
     public class EquipmentController
     {
-        private List<ConsumableItem> _availableItems = new List<ConsumableItem>();
+        private List<Item> _availableItems = new List<Item>();
     }
 }

@@ -6,16 +6,17 @@ using Assets.Scripts.Units.Soldier;
 
 namespace Assets.Scripts
 {
-    public abstract class ConsumableItem
+    public abstract class Item
     {
         public string Name { get; set; }
         public UnitParameters StatsChange { get; set; }
 
         public List<Action<Soldier, Enemy>> OnHitActions = new List<Action<Soldier, Enemy>>();
+        public Action<Unit> SpecialEffectAction;
 
         protected readonly bool _multiplyStats;
 
-        public ConsumableItem(UnitParameters statsChange, bool multiplyStats = false)
+        public Item(UnitParameters statsChange, bool multiplyStats = false)
         {
             StatsChange = statsChange;
             _multiplyStats = multiplyStats;
@@ -24,10 +25,11 @@ namespace Assets.Scripts
         public virtual void Apply(Unit unit)
         {
             unit.UP = _multiplyStats ? unit.UP * StatsChange : unit.UP + StatsChange;
+            SpecialEffectAction?.Invoke(unit);
         }
     }
 
-    public class EquipmentItem : ConsumableItem
+    public class EquipmentItem : Item
     {
         public EquipmentItem(UnitParameters statsChange, bool multiplyStats = false) : base(statsChange, multiplyStats)
         {
@@ -44,11 +46,20 @@ namespace Assets.Scripts
         }
     }
 
-    public class Mutagen : ConsumableItem
+    public class Mutagen : Item
     {
         public Mutagen(UnitParameters statsChange, bool multiplyStats = false) : base(statsChange, multiplyStats)
         {
 
         }
     }
+
+    public class ConsumableItem : Item
+    {
+        public ConsumableItem(UnitParameters statsChange, bool multiplyStats = false) : base(statsChange, multiplyStats)
+        {
+
+        }
+    }
+
 }
