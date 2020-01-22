@@ -17,6 +17,7 @@ namespace Assets.Scripts.Controllers
 
         private readonly Text _choiceText;
         private readonly GameController _gc;
+        private readonly GameObject _rangeIndicator;
 
         public HQUIManager HQUIManager { get; private set; }
         private GameObject _panelPrefab;
@@ -25,7 +26,7 @@ namespace Assets.Scripts.Controllers
 
         public UIController(GameController gc, EQCanvasController eqCanvas, Canvas choiceMenu, Text choiceText, Button choiceLeft,
             Button choiceMid, Button choiceRight, Button recruitNewUnitButton, Button sellUnitButton, 
-            Button buyRandomItemButton, Text nameText, Text describText)
+            Button buyRandomItemButton, Text nameText, Text describText, Button hideUnitButton, GameObject rangeIndicator)
         {
             _gc = gc;
             _choiceMenu = choiceMenu;
@@ -40,7 +41,9 @@ namespace Assets.Scripts.Controllers
             _choiceRight = choiceRight;
             _choiceRightText = choiceRight.GetComponentInChildren<Text>();
 
-            UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText);
+            _rangeIndicator = rangeIndicator;
+
+            UpgradeManager = new UpgradeUIManager(choiceMenu, choiceLeft, choiceMid, choiceRight, nameText, describText, hideUnitButton, rangeIndicator);
             HQUIManager = new HQUIManager(recruitNewUnitButton, sellUnitButton, gc.EconomyController, UpgradeManager);
             EQCanvasController = eqCanvas;
 
@@ -50,6 +53,12 @@ namespace Assets.Scripts.Controllers
 
                 eqCanvas.AddNewItem(ConsumableItemsList.AllConsumableItems[GameController.RandomGenerator.Next(0,ConsumableItemsList.AllConsumableItems.Length)], gc);
             });
+            
+            hideUnitButton.onClick.AddListener(() =>
+                {
+                    UpgradeManager.CurrentUnit.SetHideUnit(!UpgradeManager.CurrentUnit.Hidden);
+                });
+
         }
 
         public void Instantiate()

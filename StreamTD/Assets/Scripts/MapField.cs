@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Units.Soldier;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Assets.Scripts
 {

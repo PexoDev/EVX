@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Attacks;
 using Assets.Scripts.Units;
 using Assets.Scripts.Units.Enemy;
@@ -11,12 +12,12 @@ namespace Assets.Scripts.Controllers
 {
     public class EnemySpawner
     {
-        private static Dictionary<int,List<Func<float,Enemy>>> AllEnemiesPrefabs = new Dictionary<int, List<Func<float,Enemy>>>();
+        private static Dictionary<EnemyType, List<Func<float,Enemy>>> AllEnemiesPrefabs = new Dictionary<EnemyType, List<Func<float,Enemy>>>();
         private EnemiesController _ec;
 
-        public Enemy GenerateEnemy(float powerLevel)
+        public Enemy GenerateEnemy(float powerLevel, EnemyType type)
         {
-           return AllEnemiesPrefabs[0][GameController.RandomGenerator.Next(0, AllEnemiesPrefabs[0].Count)].Invoke(powerLevel);
+            return AllEnemiesPrefabs[type][GameController.RandomGenerator.Next(0, AllEnemiesPrefabs[type].Count)].Invoke(powerLevel);
         }
 
         public EnemySpawner(MapField[] path,SoldiersController sc, EnemiesController ec,PlayerBase pb)
@@ -66,7 +67,9 @@ namespace Assets.Scripts.Controllers
                 return new DummyEnemy(path, sc, ec, pb, DamageType.Ballistic, HealthType.Default, assassin0UP, Mathf.FloorToInt(1 * powerLevel)) { Type = EnemyType.Light, ScoreValue = 2};
             }
 
-            AllEnemiesPrefabs.Add(0,new List<Func<float,Enemy>> { Light, Mid,Heavy, Assassin});
+            AllEnemiesPrefabs.Add(EnemyType.Light, new List<Func<float,Enemy>> { Light, Assassin});
+            AllEnemiesPrefabs.Add(EnemyType.Medium, new List<Func<float,Enemy>> { Mid });
+            AllEnemiesPrefabs.Add(EnemyType.Heavy, new List<Func<float,Enemy>> { Heavy});
         }
     }
 }

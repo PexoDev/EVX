@@ -14,10 +14,11 @@ namespace Assets.Scripts.Units.Soldier
         {
             AttacksPerSecond = 2f,
             Health = 200,
-            AttackRange = 4,
+            AttackRange = 7,
             ClipSize = 20,
             AttackAccuracy = 0.9f,
             CriticalChance = 0.05f,
+            CriticalMultiplier= 1.5f,
             ReloadTime = 1
         };
 
@@ -34,6 +35,9 @@ namespace Assets.Scripts.Units.Soldier
 
         public override void AutoAttack()
         {
+            //Soldiers don't shoot while hidden
+            if(!Targetable) return;
+
             base.AutoAttack();
             if(CurrentTarget!= null && Body != null)
                 Body.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(CurrentTarget.Position.y - Position.y, CurrentTarget.Position.x - Position.x) * Mathf.Rad2Deg - 90f);

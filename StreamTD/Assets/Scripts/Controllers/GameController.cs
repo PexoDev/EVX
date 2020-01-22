@@ -1,12 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Assets.Scripts.Attacks;
-using Assets.Scripts.Units;
+﻿using Assets.Scripts.Attacks;
 using Assets.Scripts.Units.Enemy;
 using Assets.Scripts.Units.Soldier;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,7 +16,8 @@ namespace Assets.Scripts.Controllers
         public ProjectilesController ProjectilesController { get; private set; }
         public PlayerBase PlayerBase { get; private set; }
         public ScoreController ScoreController { get; private set; } = new ScoreController();
-        public EconomyController EconomyController { get; set; } 
+        public EconomyController EconomyController { get; set; }
+        public WaveController WaveController { get; set; }
 
         private static GameMode _mode = GameMode.Play;
 
@@ -49,6 +44,7 @@ namespace Assets.Scripts.Controllers
 
         [SerializeField] private Text _nameText;
         [SerializeField] private Text _describText;
+        [SerializeField] private Button _hideUnitButton;
         [SerializeField] private Button _buyNewUnitButton;
         [SerializeField] private Button _sellUnitButton;
         [SerializeField] private Button _buyRandomItemButton;
@@ -64,6 +60,7 @@ namespace Assets.Scripts.Controllers
         [SerializeField] private Material _ballisticMaterial;
         [SerializeField] private Mesh _projectileMesh;
 
+        [SerializeField] private GameObject _rangeIndicator;
 
         public EnemiesController EnemiesController { get; set; }
         public SoldiersController SoldiersController { get; set; }
@@ -84,12 +81,14 @@ namespace Assets.Scripts.Controllers
             Map = new MapGrid(((int)_mapSize.x, (int)_mapSize.y), _mapFieldObjectPrefab, _mapParentTransform, this, _mapFieldSprite, _pathLineRenderer);
             ProjectilesController = new ProjectilesController(_plasMaterial,_laserMaterial, _ballisticMaterial, _projectileMesh);
             EconomyController = new EconomyController(_quantsText);
-            UIController = new UIController(this, _eqCanvasController, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _buyNewUnitButton, _sellUnitButton, _buyRandomItemButton, _nameText, _describText);
+            UIController = new UIController(this, _eqCanvasController, _choiceModalCanvas, _choiceText, _choiceLeft, _choiceMid, _choiceRight, _buyNewUnitButton, _sellUnitButton, _buyRandomItemButton, _nameText, _describText, _hideUnitButton, _rangeIndicator);
             UIController.Instantiate();
 
             EnemiesController = new EnemiesController(this, _enemyPrefab, _enemiesParentTransform, _enemySprites[0], _enemySprites[1], _enemySprites[2]);
             SoldiersController = new SoldiersController(this, EnemiesController, _soldierSprites);
             EnemiesController.ParentCanvas = _mainCanvas;
+            WaveController = new WaveController(this);
+            WaveController.GenerateAllWaves();
         }
 
         private void Update()
@@ -141,41 +140,11 @@ namespace Assets.Scripts.Controllers
                     SoldiersController.ProcessActions();
                     EnemiesController.ProcessActions();
                     CooldownController.UpdateCooldowns(GameSpeed);
-                    GenerateWave();
+                    WaveController.SpawnEnemy();
                 }
             }
-
             UIController.UpgradeManager.Render();
         }
-
-        private float _enemySpawnCooldown = 0.45f;
-        private float _currentEnemySpawnCooldown;
-        [SerializeField]private float _powerLevel = 1;
-        [SerializeField] private int _enemiesSpawned = 0;
-        private void GenerateWave()
-        {
-
-            if (_currentEnemySpawnCooldown > 0)
-            {
-                _currentEnemySpawnCooldown -= Time.deltaTime;
-                return;
-            }
-
-            EnemiesController.SpawnEnemy(_powerLevel);
-            _powerLevel = 1 + ((float)math.pow(_enemiesSpawned,1.1) / 300 + math.cos(_enemiesSpawned*0.1f)*0.2f) * 0.25f;
-            _enemiesSpawned++;
-            if (_spawnTwo)
-            {
-                EnemiesController.SpawnEnemy(_powerLevel);
-                _powerLevel = 1 + ((float)math.pow(_enemiesSpawned, 1.1) / 300 + math.cos(_enemiesSpawned * 0.1f) * 0.2f) * 0.25f;
-                _enemiesSpawned++;
-            }
-            _spawnTwo = !_spawnTwo;
-
-            _currentEnemySpawnCooldown = _enemySpawnCooldown;
-        }
-
-        private bool _spawnTwo;
     }
 
     public enum GameMode

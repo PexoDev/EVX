@@ -8,7 +8,7 @@ namespace Assets.Scripts.Units.Enemy
     public class EnemiesController : EntitiesController<Enemy>
     {
         public static Canvas ParentCanvas;
-        private EnemySpawner _spawner;
+        public EnemySpawner Spawner { get; private set; }
         private readonly ObjectBodyPool<Enemy, EnemyType> _pool;
         private GameObject _enemyPrefab;
         private MapField _tile;
@@ -27,11 +27,11 @@ namespace Assets.Scripts.Units.Enemy
             return Gc.Map.Path.First();
         }
 
-        public void SpawnEnemy(float powerLevel)
+        public void SpawnEnemy(float powerLevel, EnemyType type)
         {
-            if (_spawner == null) _spawner = new EnemySpawner(Gc.Map.Path, Gc.SoldiersController, this, Gc.PlayerBase);
+            if (Spawner == null) Spawner = new EnemySpawner(Gc.Map.Path, Gc.SoldiersController, this, Gc.PlayerBase);
 
-            var enemy = _spawner.GenerateEnemy(powerLevel);
+            var enemy = Spawner.GenerateEnemy(powerLevel, type);
             var newEnemy = _pool.GetObject(enemy, null, enemy.Type);
             newEnemy.Object.Move(StartingTile.Position + Vector2.one * GameController.RandomGenerator.Next(-3,3)*0.1f);
             Entities.Add(newEnemy.Object);

@@ -153,5 +153,14 @@ namespace Assets.Scripts
 
             _gc.EconomyController.Quants += HQUIManager.UnitPrice / 2;
         }
+        public bool Hidden { get; private set; }
+        public void SetHideUnit(bool hide)
+        {
+            Hidden = hide;
+            foreach (Soldier soldier in Soldiers)
+            {
+                soldier.Targetable = hide;
+            }
+        }
     }
 }

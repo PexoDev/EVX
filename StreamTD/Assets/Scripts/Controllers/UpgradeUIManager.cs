@@ -16,12 +16,16 @@ namespace Assets.Scripts.Controllers
         private readonly Button _choiceLeft;
         private readonly Button _choiceMid;
         private readonly Button _choiceRight;
+        private readonly Button _hideUnitButton;
 
         private readonly Text _nameText;
         private readonly Text _describText;
+        private GameObject _rangeIndicator;
 
-        public UpgradeUIManager(Canvas choiceMenu,Button choiceLeft, Button choiceMid, Button choiceRight, Text nameText, Text describText)
+        public UpgradeUIManager(Canvas choiceMenu,Button choiceLeft, Button choiceMid, Button choiceRight, Text nameText, Text describText, Button hideUnitButton, GameObject rangeIndicator)
         {
+            _rangeIndicator = rangeIndicator;
+            _hideUnitButton = hideUnitButton;
             _choiceMenuCanvas = choiceMenu;
             _nameText = nameText;
             _describText = describText;
@@ -43,11 +47,18 @@ namespace Assets.Scripts.Controllers
         {
             if (CurrentUnit == null)
             {
+                _rangeIndicator.SetActive(false);
                 _nameText.text = "";
                 _describText.text = "";
+                _hideUnitButton.gameObject.SetActive(false);
                 return;
             }
 
+            _rangeIndicator.SetActive(true);
+            _rangeIndicator.transform.position = CurrentUnit.Position;
+            _rangeIndicator.transform.localScale = Vector3.one * 1.75f * CurrentUnit.UP.AttackRange;
+
+            _hideUnitButton.gameObject.SetActive(true);
             _nameText.text = CurrentUnit.Soldiers.Select(sold => sold.Name + " [" + sold.HP+"]").Aggregate((s1, s2) => $"{s1}\n{s2}");
 
             _describText.text = "";

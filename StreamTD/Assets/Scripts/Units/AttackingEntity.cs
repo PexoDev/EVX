@@ -91,7 +91,7 @@ namespace Assets.Scripts.Units
         public virtual TTargetType LookForTarget()
         {
             if (CurrentTarget != null)
-                if (CurrentTarget.Alive && CurrentTarget.IsInRange(Position, AttackRange))
+                if (CurrentTarget.Alive && CurrentTarget.Targetable && CurrentTarget.IsInRange(Position, AttackRange))
                     return CurrentTarget;
                 else
                     CurrentTarget = null;
